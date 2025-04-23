@@ -1,0 +1,211 @@
+/* dashboard.css */
+
+body {
+    font-family: sans-serif;
+    background-color: #f8f9fa; /* Warna latar belakang body */
+    display: flex;
+    min-height: 100vh; /* Memastikan tinggi minimal viewport */
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background-color: #e0f2f7; /* Warna latar belakang sidebar (hijau muda) */
+    color: #333; /* Warna teks sidebar */
+    width: 250px; /* Lebar sidebar default */
+    padding-top: 20px;
+    transition: all 0.3s; /* Efek transisi untuk animasi */
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Membuat sidebar setinggi viewport */
+    position: fixed; /* Membuat sidebar tetap di samping saat di-scroll */
+    left: 0;
+    top: 0;
+    z-index: 1; /* Memastikan sidebar berada di atas konten lain */
+}
+
+.sidebar .logo-area {
+    padding: 20px;
+    text-align: center; /* Untuk memposisikan logo di tengah */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Garis pemisah dengan menu */
+}
+
+.sidebar .logo {
+    max-width: 100%; /* Agar logo tidak melebihi lebar area */
+    height: auto; /* Menjaga aspek rasio logo */
+    transition: all 0.3s; /* Efek transisi untuk logo */
+}
+
+.sidebar h5 {
+    padding: 10px 20px;
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #64b5f6; /* Warna teks judul dashboard */
+    transition: all 0.3s; /* Efek transisi untuk judul */
+}
+
+.sidebar .nav {
+    flex-grow: 1; /* Membuat nav mengambil sisa ruang */
+}
+
+.sidebar .nav-link {
+    padding: 12px 20px;
+    color: #333; /* Warna teks link */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease, padding 0.3s; /* Efek transisi untuk hover dan padding */
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+    font-size: 1rem;
+    transition: margin-right 0.3s; /* Efek transisi untuk margin ikon */
+}
+
+.sidebar .nav-link .link-text,
+.sidebar .nav-link .dropdown-icon {
+    transition: opacity 0.3s, margin-left 0.3s; /* Efek transisi untuk teks dan ikon dropdown */
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Efek hover yang lebih lembut */
+}
+
+.sidebar .submenu {
+    background-color: #f5f5f5; /* Warna latar belakang submenu yang lebih terang */
+    padding-left: 20px;
+    transition: padding-left 0.3s; /* Efek transisi untuk padding submenu */
+}
+
+.sidebar .submenu .nav-link {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    color: #555; /* Warna teks submenu */
+    text-decoration: none; /* Menghilangkan garis bawah pada link submenu */
+    display: block; /* Memastikan setiap link submenu mengambil baris penuh */
+}
+
+.sidebar .submenu .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.03); /* Efek hover submenu */
+}
+
+/* Styling untuk ikon dropdown */
+.sidebar .nav-link .dropdown-icon {
+    color: #000; /* Warna ikon dropdown menjadi hitam */
+    font-size: 0.8rem; /* Ukuran ikon dropdown */
+    margin-left: auto; /* Mendorong ikon ke kanan */
+}
+
+.sidebar .nav-link .dropdown-icon.rotated {
+    transform: rotate(180deg); /* Memutar ikon saat submenu terbuka */
+    transition: transform 0.2s ease-in-out; /* Efek transisi rotasi */
+}
+
+/* Styling untuk submenu aktif */
+.sidebar .submenu .nav-link.active-submenu {
+    background-color: #bbdefb; /* Contoh warna biru muda */
+    color: #1976d2; /* Contoh warna biru tua untuk teks */
+    font-weight: bold; /* Membuat teks menjadi tebal (opsional) */
+}
+
+/* Styling saat sidebar mengecil */
+body.sidebar-collapsed .sidebar {
+    width: 60px; /* Lebar sidebar yang mengecil */
+}
+
+body.sidebar-collapsed .sidebar .logo-area {
+    padding: 10px 0;
+}
+
+body.sidebar-collapsed .sidebar .logo {
+    max-height: 30px;
+}
+
+body.sidebar-collapsed .sidebar h5,
+body.sidebar-collapsed .sidebar .nav-link .link-text,
+body.sidebar-collapsed .sidebar .nav-link .dropdown-icon {
+    opacity: 0;
+    margin-left: -20px;
+    transition: opacity 0.3s, margin-left 0.3s;
+    display: none; /* Untuk memastikan tidak mengambil ruang */
+}
+
+body.sidebar-collapsed .sidebar .nav-link {
+    justify-content: center; /* Tengah ikon menu */
+    padding: 15px 0; /* Sesuaikan padding jika perlu */
+}
+
+body.sidebar-collapsed .sidebar .nav-link i {
+    margin-right: 0; /* Hapus margin ikon */
+    font-size: 1.5rem; /* Ukuran ikon lebih besar */
+}
+
+body.sidebar-collapsed .sidebar .submenu {
+    position: absolute; /* Agar submenu tidak mempengaruhi lebar sidebar yang mengecil */
+    left: 60px; /* Tampilkan di samping sidebar yang mengecil */
+    top: 0;
+    background-color: #f5f5f5;
+    z-index: 2;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    display: none; /* Sembunyikan submenu secara default saat sidebar mengecil */
+    padding-left: 10px; /* Padding lebih kecil untuk submenu yang muncul */
+}
+
+body.sidebar-collapsed .sidebar .nav-link:hover + .submenu,
+body.sidebar-collapsed .sidebar .submenu:hover {
+    display: block; /* Tampilkan submenu saat hover pada ikon atau submenu */
+}
+
+/* Main Content Styling */
+.d-flex {
+    margin-left: 250px; /* Memberikan ruang untuk sidebar default */
+    transition: margin-left 0.3s;
+    display: flex; /* Menggunakan flexbox untuk menata topbar dan content */
+    flex-direction: column; /* Menyusun topbar dan content secara vertikal */
+    min-height: 100vh; /* Memastikan seluruh tinggi viewport tercakup */
+}
+
+.topbar {
+    background-color: #fff; /* Warna latar belakang topbar */
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6; /* Garis pemisah bawah topbar */
+    z-index: 10; /* Pastikan topbar berada di atas konten lain jika diperlukan */
+}
+
+.topbar div i#sidebarToggle {
+    font-size: 1.5rem; /* Ukuran ikon hamburger diperbesar */
+    cursor: pointer; /* Memberikan indikasi bahwa ini bisa diklik */
+    color: #495057;
+}
+
+.topbar div span {
+    margin-right: 5px;
+    color: #495057;
+}
+
+.topbar div .bi-person-circle {
+    font-size: 1.5rem;
+    color: #495057;
+}
+
+.content {
+    padding: 20px;
+    flex-grow: 1; /* Membuat konten utama mengambil sisa ruang */
+    background-color: #f8f9fa; /* Warna latar belakang konten */
+    /* Tidak perlu margin-top karena sudah diatur oleh flex-direction: column di .d-flex */
+}
+
+/* Styling saat sidebar mengecil */
+body.sidebar-collapsed .d-flex {
+    margin-left: 60px; /* Sesuaikan margin konten utama saat sidebar mengecil */
+}
