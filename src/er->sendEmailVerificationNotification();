@@ -1,0 +1,31 @@
+[90m= [39m[34;4mApp\Models\User[39;24m {#6284
+    [34mnomor_induk[39m: "[32mtest123[39m",
+    [34mname[39m: "[32mTest User[39m",
+    [34memail[39m: "[32mtest@example.com[39m",
+    #[33mpassword[39m: "[32m$2y$12$UOtmV96o7ETjp0Z4ViabVuZBXMR0YkJrlli8uS04PK7nLOcOkD6Pu[39m",
+    [34mrole[39m: "[32mmahasiswa[39m",
+    [34mupdated_at[39m: "[32m2025-04-27 11:11:11[39m",
+    [34mcreated_at[39m: "[32m2025-04-27 11:11:11[39m",
+    [34mid[39m: [35m3[39m,
+  }
+
+[90m= [39m[34;4mApp\Models\User[39;24m {#6315
+    [34mid[39m: [35m1[39m,
+    [34mname[39m: "[32mAdmin Utama[39m",
+    [34memail[39m: "[32madmin1@sita.test[39m",
+    [34memail_verified_at[39m: [36mnull[39m,
+    #[33mpassword[39m: "[32m$2y$12$MQz50gplGPdfmy.2pOAtjOo7Ya9RnisaYAH2OHpasFPN2YOaJXfpq[39m",
+    #[33mremember_token[39m: [36mnull[39m,
+    [34mcreated_at[39m: "[32m2025-04-27 08:57:33[39m",
+    [34mupdated_at[39m: "[32m2025-04-27 08:57:33[39m",
+    [34mrole[39m: "[32madmin[39m",
+    [34mnomor_induk[39m: "[32madmin001[39m",
+    [34mjurusan[39m: [36mnull[39m,
+    [34mprogram_studi[39m: [36mnull[39m,
+    [34mkelas[39m: [36mnull[39m,
+    [34mjenis_kelamin[39m: "[32mL[39m",
+    [34mkompetensi[39m: [36mnull[39m,
+    [34mketersediaan[39m: [35m1[39m,
+    [34mverification_token[39m: [36mnull[39m,
+  }
+

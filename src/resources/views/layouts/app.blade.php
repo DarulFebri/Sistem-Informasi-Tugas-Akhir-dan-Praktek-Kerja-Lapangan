@@ -1,135 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>SIPRAKTA</title>
-    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title') - SITA PKL</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            padding-top: 56px;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            width: 250px;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-<div class="wrapper">
-    <div class="sidebar">
-        <div class="logo-area">
-            <img src="{{ asset('images/logo-anda.png') }}" alt="Logo Perusahaan" class="logo">
-        </div>
-        <h5><i class="bi bi-columns-gap"></i> Dashboard</h5>
-        <ul class="nav flex-column">
-            <li>
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#kelolaBimbingan" aria-expanded="false" aria-controls="kelolaBimbingan">
-                    <i class="bi bi-people"></i> <span class="link-text">Kelola Bimbingan</span> <i class="bi bi-caret-down-fill ms-auto dropdown-icon"></i>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            @auth
+                <a class="nav-link" href="{{ 
+                auth()->user()->isAdmin() ? route('admin.dashboard') : 
+                (auth()->user()->isDosen() ? route('dosen.dashboard') : 
+                route('mahasiswa.dashboard')) 
+                }}">
+                    Dashboard
                 </a>
-                <div class="collapse submenu" id="kelolaBimbingan">
-                    <a class="nav-link" href="#">Dosen Pembimbing</a>
-                    <a class="nav-link" href="#">Mahasiswa Bimbingan</a>
+            @endauth
+                SITA PKL
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    @auth
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{
+                                auth()->user()->isAdmin() ? route('admin.dashboard') :
+                                (auth()->user()->isDosen() ? route('dosen.dashboard') :
+                                route('mahasiswa.dashboard'))
+                            }}">
+                                Dashboard
+                            </a>
+                        </li>
+                    @endauth
+                </ul>
+                <div class="d-flex">
+                    @auth
+                        <span class="navbar-text me-3">
+                            Halo, {{ Auth::user()->name }}
+                        </span>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-light">Logout</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-outline-light">Login</a>
+                    @endauth
                 </div>
-            </li>
-            <li>
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#pengajuanJudul" aria-expanded="false" aria-controls="pengajuanJudul">
-                    <i class="bi bi-journal-text"></i> <span class="link-text">Pengajuan Judul</span> <i class="bi bi-caret-down-fill ms-auto dropdown-icon"></i>
-                </a>
-                <div class="collapse submenu" id="pengajuanJudul">
-                    <a class="nav-link" href="#">Judul Masuk</a>
-                    <a class="nav-link" href="#">Judul Diterima</a>
-                </div>
-            </li>
-            <li>
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#pengajuanTA" aria-expanded="false" aria-controls="pengajuanTA">
-                    <i class="bi bi-journals"></i> <span class="link-text">Pengajuan TA</span> <i class="bi bi-caret-down-fill ms-auto dropdown-icon"></i>
-                </a>
-                <div class="collapse submenu" id="pengajuanTA">
-                    <a class="nav-link" href="#">TA Pengerjaan</a>
-                    <a class="nav-link" href="#">TA Terjadwal</a>
-                    <a class="nav-link" href="#">TA Selesai</a>
-                </div>
-            </li>
-            <li>
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#dosen" aria-expanded="false" aria-controls="dosen">
-                    <i class="bi bi-person"></i> <span class="link-text">Dosen</span> <i class="bi bi-caret-down-fill ms-auto dropdown-icon"></i>
-                </a>
-                <div class="collapse submenu" id="dosen">
-                    <a class="nav-link" href="#">Data Dosen</a>
-                </div>
-            </li>
-            <li>
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#mahasiswa" aria-expanded="false" aria-controls="mahasiswa">
-                    <i class="bi bi-mortarboard"></i> <span class="link-text">Mahasiswa</span> <i class="bi bi-caret-down-fill ms-auto dropdown-icon"></i>
-                </a>
-                <div class="collapse submenu" id="mahasiswa">
-                    <a class="nav-link" href="#">Data Mahasiswa</a>
-                </div>
-            </li>
-            <li><a class="nav-link" href="#"><i class="bi bi-book"></i> <span class="link-text">Program Studi</span></a></li>
-            <li><a class="nav-link" href="#"><i class="bi bi-calendar-event"></i> <span class="link-text">Jadwal</span></a></li>
-        </ul>
-    </div>
-
-    <div class="d-flex flex-column w-100">
-        <div class="topbar">
-            <div><i class="bi bi-list" id="sidebarToggle"></i></div>
-            <div>
-                <span>Administrator</span>
-                <i class="bi bi-person-circle ms-2"></i>
             </div>
         </div>
-        <div class="content">
-            @yield('content')
+    </nav>
+
+    @auth
+        <div class="sidebar bg-light border-end">
+            <div class="p-3">
+                <h5>Menu</h5>
+                <hr>
+                <ul class="nav nav-pills flex-column">
+                    @if(Auth::user()->isAdmin())
+                        @include('partials.admin-menu')
+                    @elseif(Auth::user()->isDosen())
+                        @include('partials.dosen-menu')
+                    @else
+                        @include('partials.mahasiswa-menu')
+                    @endif
+                </ul>
+            </div>
         </div>
-    </div>
-</div>
+    @endauth
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const body = document.body;
-        const navLinksWithSubmenu = document.querySelectorAll('.sidebar .nav-link[data-bs-toggle="collapse"]');
-        const submenuLinks = document.querySelectorAll('.sidebar .submenu .nav-link');
+    <main class="@auth main-content @endauth">
+        @yield('content')
+    </main>
 
-        sidebarToggle.addEventListener('click', function() {
-            body.classList.toggle('sidebar-collapsed');
-        });
-
-        navLinksWithSubmenu.forEach(link => {
-            link.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-bs-target');
-                const currentlyOpen = document.querySelector('.submenu.show');
-
-                if (currentlyOpen && '#' + currentlyOpen.id !== targetId && !body.classList.contains('sidebar-collapsed')) {
-                    const bsCollapse = new bootstrap.Collapse(currentlyOpen);
-                    bsCollapse.hide();
-                    const currentlyOpenLink = document.querySelector(`.nav-link[data-bs-target="#${currentlyOpen.id}"]`);
-                    if (currentlyOpenLink) {
-                        currentlyOpenLink.setAttribute('aria-expanded', 'false');
-                        const dropdownIcon = currentlyOpenLink.querySelector('.dropdown-icon');
-                        if (dropdownIcon) {
-                            dropdownIcon.classList.remove('rotated');
-                        }
-                    }
-                }
-
-                const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
-                const dropdownIcon = this.querySelector('.dropdown-icon');
-                if (dropdownIcon) {
-                    dropdownIcon.classList.toggle('rotated', !isExpanded);
-                }
-            });
-        });
-
-        const allSubmenus = document.querySelectorAll('.submenu');
-        allSubmenus.forEach(submenu => {
-            const bsCollapse = new bootstrap.Collapse(submenu, { toggle: false });
-        });
-
-        submenuLinks.forEach(link => {
-            link.addEventListener('click', function(event) {
-                submenuLinks.forEach(otherLink => {
-                    otherLink.classList.remove('active-submenu');
-                });
-                this.classList.add('active-submenu');
-            });
-        });
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 </html>
