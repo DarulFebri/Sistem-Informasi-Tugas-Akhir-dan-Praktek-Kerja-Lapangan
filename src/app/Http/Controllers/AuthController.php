@@ -2,86 +2,99 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mahasiswa;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
+    public function showRegistrationFormMahasiswa()
     {
-        return view('auth.login');
+        return view('auth.register-mahasiswa');
+    }
+
+    public function registerMahasiswa(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nim' => 'required|unique:mahasiswas',
+            'nama_lengkap' => 'required',
+            'jurusan' => 'required',
+            'prodi' => 'required',
+            'jenis_kelamin' => 'required',
+            'kelas' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::create([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'mahasiswa',
+        ]);
+
+        Mahasiswa::create([
+            'user_id' => $user->id,
+            'nim' => $request->nim,
+            'nama_lengkap' => $request->nama_lengkap,
+            'jurusan' => $request->jurusan,
+            'prodi' => $request->prodi,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'kelas' => $request->kelas,
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/mahasiswa/dashboard');
     }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'nomor_induk' => 'required',
+            'email' => ['required', 'email'],
             'password' => 'required',
-            'role' => 'required|in:admin,dosen,mahasiswa'
         ]);
 
-        // Cek role user yang login sesuai dengan yang dipilih
-        $user = User::where('nomor_induk', $request->nomor_induk)
-                  ->where('role', $request->role)
-                  ->first();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user);
+            $user = Auth::user();
 
-            // Redirect berdasarkan role
-            return match($user->role) {
-                'admin' => redirect()->intended(route('admin.dashboard')),
-                'dosen' => redirect()->intended(route('dosen.dashboard')),
-                'mahasiswa' => redirect()->intended(route('mahasiswa.dashboard')),
-                default => redirect('/')
-            };
+            if ($user->role == 'admin') {
+                return redirect()->intended('/admin/dashboard');
+            } elseif ($user->role == 'dosen') {
+                return redirect()->intended('/dosen/dashboard');
+            } elseif ($user->role == 'mahasiswa') {
+                return redirect()->intended('/mahasiswa/dashboard');
+            }
+
+            return redirect()->intended('/dashboard'); // Default redirect
         }
 
         return back()->withErrors([
-            'nomor_induk' => 'Kredensial tidak valid atau role tidak sesuai.',
-        ]);
+            'email' => 'Email atau password salah.',
+        ])->onlyInput('email');
+    }
+
+    public function showLoginForm()
+    {
+        return view('auth.login'); // Pastikan view ini ada
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
+
         return redirect('/');
-    }
-
-    public function showRegistrationForm()
-    {
-        return view('auth.register');
-    }
-
-    public function register(Request $request)
-    {
-        $request->validate([
-            'nomor_induk' => 'required|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:mahasiswa,dosen'
-        ]);
-
-        $user = User::create([
-            'nomor_induk' => $request->nomor_induk,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'verification_token' => Str::random(60),
-            // Set default values untuk field lainnya
-            'jenis_kelamin' => 'L',
-            'ketersediaan' => true
-        ]);
-
-        $user->sendEmailVerificationNotification();
-
-        return redirect()->route('login')
-            ->with('success', 'Registrasi berhasil! Silakan cek email untuk verifikasi.');
     }
 }

@@ -1,0 +1,191 @@
+berikut adalah dokumen-dokumen yang diperlukan untuk membuat pengajuan tugas Akhir:
+dokumen dokumen yang menjadi syarat pengajuan ta{
+    1. Surat Permohonan Sidang
+    2. Surat Keterangan bebas Kompensasi Semster Ganjil & Genap
+    3. IPK Terakhir (Lampiran Rapor Semester 1 s.d 5 (D3) dan 1 s.d 7 (D4)) sebanyak 1 (satu) rangkap)
+    4. Bukti menyerahkan laporan PKL
+    5. Nilai TOEIC minimal 450 (D3) dan 550 (D4) (Lampirkan kartu TOEIC). Jika belum mencukupi dapat memberikan fotokopi kartu nilai TOEIC terakhir dan fotokopi bukti pendaftaran tes TOEIC berikutnya
+    6. Tugas Akhir Rangkap 4 yang disetujui pembimbing
+    7. Kartu Bimbingan/Konsultasi Tugas Akhir 9x
+    8. Fotokopi Ijazah SMA/MA/SMK
+    9. Map Plastik 5 buah, warna berdasarkan masing-masing Prodi
+    10. Fotokopi Sertifikat Diksarlin
+    11. Sertifikat Responsi
+    12. Nilai Satuan Kredit Ekstrakurikuler (SKE) (Lampirkan kartu SKE)
+} 
+
+berikut adalah dokumen-dokumen yang diperlukan untuk membuat pengajuan Praktek kerja lapangan:
+dokumen dokumen yang menjadi syarat pengajuan pkl{
+    1. Laporan PKL sebanyak 2 rangkap
+    2. Buku PKL
+    3. Kuisioner survey PKL yang telah diisi dan ditandatangani serta distempel perusahaan
+    4. Kuisioner Kelulusan (jika ada)
+    5. Kuisioner balikan PKL
+    6. Lembaran Rekomendasi Penguji
+    7. Surat Permohonan Sidang PKL
+    8. Lembar Penilaian Sidang PKL (Penguji)
+    9. Surat keterangan pelaksanaan PKL (Asli, distempel dan ditandatangani pihak perusahaan)
+    10. Fotocopy cover laporan PKL yang ada tanda tangan persetujuan sidang dari dosen pembimbing PKL
+    11. Fotocopy lembar penilaian dari pembimbing di industri (ditandatangani pembimbing industri)
+    12. Fotocopy lembar penilaian dari dosen pembimbing PKL (ditandantangani pembimbing kampus)
+    13. Fotocopy lembar konsultasi bimbingan PKL (diisi dan ditandatangani pembimbing kampus)
+
+}
+
+ini adalah routes yang berkaitan dengan mahasiswa:
+// Mahasiswa Routes
+Route::prefix('mahasiswa')->group(function () {
+    // Public routes
+    Route::get('/login', [MahasiswaController::class, 'loginForm'])->name('mahasiswa.login');
+    Route::post('/login', [MahasiswaController::class, 'login']);
+    Route::post('/logout', [MahasiswaController::class, 'logout'])->name('mahasiswa.logout');
+    
+    
+    // Protected routes
+    Route::middleware(['auth', 'mahasiswa'])->group(function () {
+        Route::get('/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswa.dashboard');
+        
+        // Pengajuan routes
+        Route::prefix('pengajuan')->name('mahasiswa.pengajuan.')->group(function () {
+            Route::get('/pilih', [PengajuanController::class, 'pilihJenis'])->name('pilih');
+            Route::get('/buat/ta', [PengajuanController::class, 'create_ta'])->name('create.ta');
+            Route::get('/buat/pkl', [PengajuanController::class, 'create_pkl'])->name('create.pkl');
+            Route::post('/', [PengajuanController::class, 'store'])->name('store');
+            Route::delete('/{pengajuan}', [PengajuanController::class, 'destroy'])->name('destroy');
+            Route::get('/', [PengajuanController::class, 'index'])->name('index');
+            Route::get('/{pengajuan}', [PengajuanController::class, 'show'])->name('show');
+            Route::put('/{pengajuan}/draft', [PengajuanController::class, 'simpanSebagaiDraft'])->name('draft');
+            Route::get('/{pengajuan}/edit', [PengajuanController::class, 'edit'])->name('edit');
+            Route::put('/{pengajuan}', [PengajuanController::class, 'update'])->name('update');
+        });
+        
+        // Dokumen routes
+        Route::prefix('dokumen')->name('mahasiswa.dokumen.')->group(function () {
+            Route::get('/pengajuan/{pengajuan}', [DokumenController::class, 'index'])->name('index');
+            Route::put('/{dokumen}', [DokumenController::class, 'update'])->name('update');
+            Route::delete('/{dokumen}', [DokumenController::class, 'destroy'])->name('destroy');
+        });
+    });
+});
+
+berikut adalah struktur database tabel mahasiswa:
+mysql> desc mahasiswas;
++---------------+-----------------+------+-----+---------+----------------+
+| Field         | Type            | Null | Key | Default | Extra          |
++---------------+-----------------+------+-----+---------+----------------+
+| id            | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| nim           | varchar(255)    | NO   | UNI | NULL    |                |
+| nama_lengkap  | varchar(255)    | NO   |     | NULL    |                |
+| jurusan       | varchar(255)    | NO   |     | NULL    |                |
+| prodi         | varchar(255)    | NO   |     | NULL    |                |
+| jenis_kelamin | varchar(255)    | NO   |     | NULL    |                |
+| email         | varchar(255)    | NO   | UNI | NULL    |                |
+| kelas         | varchar(255)    | NO   |     | NULL    |                |
+| created_at    | timestamp       | YES  |     | NULL    |                |
+| updated_at    | timestamp       | YES  |     | NULL    |                |
+| user_id       | bigint unsigned | NO   | UNI | NULL    |                |
++---------------+-----------------+------+-----+---------+----------------+
+11 rows in set (0.01 sec)
+
+berikut adalah struktur database tabel dokumen:
+mysql> desc dokumens;
++--------------+-----------------+------+-----+---------+----------------+
+| Field        | Type            | Null | Key | Default | Extra          |
++--------------+-----------------+------+-----+---------+----------------+
+| id           | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| pengajuan_id | bigint unsigned | NO   | MUL | NULL    |                |
+| nama_file    | varchar(255)    | NO   |     | NULL    |                |
+| path_file    | varchar(255)    | NO   |     | NULL    |                |
+| created_at   | timestamp       | YES  |     | NULL    |                |
+| updated_at   | timestamp       | YES  |     | NULL    |                |
++--------------+-----------------+------+-----+---------+----------------+
+6 rows in set (0.01 sec)
+
+
+ini adalah view untuk menginputkan dokumen dokumen untuk pengajuan TA dan PKL.:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pengajuan Saya</title>
+</head>
+<body>
+
+    <h2>Daftar Pengajuan Sidang Saya</h2>
+
+    @if (session('success'))
+        <div style="color: green;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div style="color: red;">
+            {{ session('error' )}}
+        </div>
+    @endif
+
+    @if ($pengajuans->count() > 0)
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Jenis Pengajuan</th>
+                    <th>Status</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($pengajuans as $pengajuan)
+                    <tr>
+                        <td>{{ $pengajuan->id }}</td>
+                        <td>{{ ucfirst($pengajuan->jenis_pengajuan) }}</td>
+                        <td>{{ str_replace('_', ' ', strtoupper($pengajuan->status)) }}</td>
+                        <td>{{ $pengajuan->created_at->format('d M Y H:i') }}</td>
+                        <td>
+                            <a href="{{ route('mahasiswa.pengajuan.show', $pengajuan->id) }}">Lihat Detail</a>
+
+                            {{-- Tambahkan logika untuk status lain di sini --}}
+                            @if ($pengajuan->status === 'draft')
+                                <a href="{{ route('mahasiswa.pengajuan.edit', $pengajuan->id) }}">Edit</a>
+                                <form action="{{ route('mahasiswa.pengajuan.destroy', $pengajuan->id) }}" method="POST" style="display:inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?')" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            @elseif ($pengajuan->status === 'dosen_ditunjuk')
+                                {{-- Mahasiswa bisa melihat bahwa dosen sudah ditunjuk --}}
+                                <span style="color: blue;">(Dosen Ditunjuk)</span>
+                                {{-- Mungkin ada link ke jadwal sidang jika sudah tersedia --}}
+                                {{-- <a href="{{ route('mahasiswa.sidang.jadwal', $pengajuan->id) }}">Lihat Jadwal Sidang</a> --}}
+                            @elseif ($pengajuan->status === 'ditolak_admin' || $pengajuan->status === 'ditolak_kaprodi')
+                                {{-- Jika ditolak, mungkin ada opsi untuk mengajukan ulang atau mengedit --}}
+                                <span style="color: orange;">(Ditolak)</span>
+                                <a href="{{ route('mahasiswa.pengajuan.edit', $pengajuan->id) }}">Ajukan Ulang</a>
+                            @else
+                                {{-- Status lainnya yang hanya untuk dilihat --}}
+                                <span style="color: gray;">(Menunggu Proses)</span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <p>Anda belum memiliki pengajuan. Silakan buat pengajuan baru.</p>
+    @endif
+    <br>
+    <a href="{{ route('mahasiswa.dashboard') }}">Kembali ke Dashboard</a>
+    <a href="{{ route('mahasiswa.pengajuan.pilih') }}">Buat Pengajuan Baru</a>
+
+</body>
+</html>
+
+saya ingin mahasiswa menginputkan dokumen dokumen persyaratan untuk melakukan sidang sesuai dengan dokumen dokumen yang menjadi syarat pengajuan ta yang saya tuliskan.
+saya ingin mahasiswa menginputkan dokumen dokumen persyaratan untuk melakukan sidang sesuai dengan dokumen dokumen yang menjadi syarat pengajuan pkl yang saya tuliskan.
+berikan ke saya migrasi jika ada kolom yang mau ditambahkan ke sebuah tabel. 
+saya ingin 2 view yang berbeda untuk 2 hal diatas.
+

@@ -1,0 +1,264 @@
+data yang didapatkan admin tidak sinkron dengan data yang didapatkan mahasiswa
+data yang didapatkan mahasiswa adalah data yang benar.
+
+view admin {
+
+    admin/sidang/index.blade.php:
+    <body>
+
+        <h2>Daftar Persidangan</h2>
+    
+        @if (session('success'))
+            <div>
+                {{ session('success') }}
+            </div>
+        @endif
+    
+        <a href="{{ route('admin.sidang.kalender') }}">Lihat Kalender Sidang</a>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>Mahasiswa</th>
+                    <th>Tanggal Sidang</th>
+                    <th>Tempat Sidang</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($sidangs as $sidang)
+                    <tr>
+                        <td>{{ $sidang->pengajuan->mahasiswa->nama_lengkap }} ({{ $sidang->pengajuan->mahasiswa->nim }})</td>
+                        <td>{{ $sidang->tanggal_sidang ? $sidang->tanggal_sidang : 'Belum Dijadwalkan' }}</td>
+                        <td>{{ $sidang->tempat_sidang ? $sidang->tempat_sidang : 'Belum Ditentukan' }}</td>
+                        <td>
+                            <a href="{{ route('admin.sidang.show', $sidang->id) }}">Detail</a>
+                            </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    
+    </body>
+
+    admin/sidang/show.blade.php:
+    <body>
+
+        <h2>Detail Persidangan</h2>
+
+        <p>Mahasiswa: {{ $sidang->pengajuan->mahasiswa->nama_lengkap }} ({{ $sidang->pengajuan->mahasiswa->nim }})</p>
+        <p>Jenis Pengajuan: {{ $sidang->pengajuan->jenis_pengajuan }}</p>
+        <p>Tanggal Sidang: {{ $sidang->tanggal_sidang ? $sidang->tanggal_sidang : 'Belum Dijadwalkan' }}</p>
+        <p>Tempat Sidang: {{ $sidang->tempat_sidang ? $sidang->tempat_sidang : 'Belum Ditentukan' }}</p>
+
+        <a href="{{ route('admin.sidang.index') }}">Kembali ke Daftar Persidangan</a>
+
+    </body>
+
+}
+
+mahasiswa{
+
+    mahasiswa/pengajuan/show.blade.php:
+    <body>
+
+        <h2>Detail Pengajuan Sidang {{ strtoupper($pengajuan->jenis_pengajuan) }}</h2> {{-- Tambahkan jenis pengajuan di H2 --}}
+
+        {{-- Pesan sukses/error dari session --}}
+        @if (session('success'))
+            <div style="color: green; margin-bottom: 10px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div style="color: red; margin-bottom: 10px;">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <p>Jenis Pengajuan: <strong>{{ strtoupper($pengajuan->jenis_pengajuan) }}</strong></p>
+        <p>Status:
+            {{-- Tampilan status yang lebih informatif dengan warna --}}
+            @if ($pengajuan->status === 'draft')
+                <strong style="color: orange;">DRAFT</strong>
+            @elseif ($pengajuan->status === 'diajukan')
+                <strong style="color: blue;">DIAJUKAN</strong>
+            @elseif ($pengajuan->status === 'diproses')
+                <strong style="color: green;">DIPROSES</strong>
+            @elseif ($pengajuan->status === 'disetujui')
+                <strong style="color: purple;">DISETUJUI</strong>
+            @elseif ($pengajuan->status === 'ditolak')
+                <strong style="color: red;">DITOLAK</strong>
+            @elseif ($pengajuan->status === 'selesai')
+                <strong style="color: green;">SELESAI</strong>
+            @elseif ($pengajuan->status === 'sidang_dijadwalkan_final') {{-- Tambahkan status ini --}}
+                <strong style="color: darkgreen;">SIDANG DIJADWALKAN FINAL</strong>
+            @else
+                <strong>{{ strtoupper($pengajuan->status) }}</strong> {{-- Default jika ada status lain --}}
+            @endif
+        </p>
+        <p>Tanggal Dibuat: {{ $pengajuan->created_at->format('d M Y H:i') }}</p>
+        <p>Terakhir Diperbarui: {{ $pengajuan->updated_at->format('d M Y H:i') }}</p>
+
+        {{-- Bagian informasi jadwal sidang --}}
+        <h3>Informasi Jadwal Sidang</h3>
+        @if ($pengajuan->sidang && $pengajuan->sidang->tanggal_waktu_sidang && $pengajuan->sidang->ruangan_sidang)
+            <p>Tanggal Sidang: <strong>{{ \Carbon\Carbon::parse($pengajuan->sidang->tanggal_waktu_sidang)->format('d F Y') }}</strong></p>
+            <p>Waktu Sidang: <strong>{{ \Carbon\Carbon::parse($pengajuan->sidang->tanggal_waktu_sidang)->format('H:i') }} WIB</strong></p>
+            <p>Ruangan Sidang: <strong>{{ $pengajuan->sidang->ruangan_sidang }}</strong></p>
+        @else
+            <p>Jadwal sidang belum ditetapkan.</p>
+        @endif
+
+        <h3>Dokumen Terupload:</h3>
+        {{-- Ganti $dokumenTerupload dengan $pengajuan->dokumens --}}
+        @if ($pengajuan->dokumens->count() > 0)
+            <ul>
+                @foreach ($pengajuan->dokumens as $dokumen) {{-- Ganti $dokumenTerupload dengan $pengajuan->dokumens --}}
+                    <li>
+                        {{ $dokumen->nama_file }}:
+                        <a href="{{ asset('storage/' . $dokumen->path_file) }}" target="_blank">Lihat File</a>
+                        {{-- Status dokumen individual (jika diperlukan) --}}
+                        {{-- (Status: {{ $dokumen->status }}) --}}
+                    </li>
+                @endforeach
+            </ul>
+        @else
+            <p>Belum ada dokumen yang diunggah untuk pengajuan ini.</p>
+        @endif
+
+        <h3>Informasi Anggota Sidang</h3>
+        @if ($pengajuan->sidang)
+            <p><strong>Ketua Sidang:</strong> {{ $pengajuan->sidang->ketuaSidang->nama ?? 'Belum Ditunjuk' }}</p>
+            <p><strong>Sekretaris Sidang:</strong> {{ $pengajuan->sidang->sekretarisSidang->nama ?? 'Belum Ditunjuk' }}</p>
+            <p><strong>Anggota Sidang 1:</strong> {{ $pengajuan->sidang->anggota1Sidang->nama ?? 'Belum Ditunjuk' }}</p>
+            <p><strong>Anggota Sidang 2:</strong> {{ $pengajuan->sidang->anggota2Sidang->nama ?? 'Belum Ditunjuk' }}</p>
+        @else
+            <p>Anggota sidang belum ditunjuk.</p>
+        @endif
+
+        <hr> {{-- Garis pemisah untuk aksi --}}
+
+        {{-- Tombol Aksi --}}
+        <a href="{{ route('mahasiswa.pengajuan.index') }}">Kembali ke Daftar Pengajuan</a>
+
+        @if ($pengajuan->status === 'draft')
+            <a href="{{ route('mahasiswa.pengajuan.edit', $pengajuan->id) }}" style="margin-left: 10px;">Edit Pengajuan Draft</a>
+        @endif
+
+        {{-- Tombol Hapus hanya jika statusnya BUKAN 'disetujui', 'diproses', atau 'selesai' --}}
+        @if ($pengajuan->status !== 'disetujui' && $pengajuan->status !== 'diproses' && $pengajuan->status !== 'selesai' && $pengajuan->status !== 'sidang_dijadwalkan_final') {{-- Tambahkan status ini --}}
+            <form action="{{ route('mahasiswa.pengajuan.destroy', $pengajuan->id) }}" method="POST" style="display:inline; margin-left: 10px;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini dan semua dokumennya? Aksi ini tidak bisa dibatalkan.');" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;">Hapus Pengajuan</button>
+            </form>
+        @endif
+
+        <br><br>
+        <a href="{{ route('mahasiswa.dashboard') }}">Kembali ke Dashboard Utama</a>
+
+    </body>
+
+}
+
+ini adalah routes mahasiswa:
+// Mahasiswa Routes
+Route::prefix('mahasiswa')->group(function () {
+    // Public routes
+    Route::get('/login', [MahasiswaController::class, 'loginForm'])->name('mahasiswa.login');
+    Route::post('/login', [MahasiswaController::class, 'login']);
+    Route::post('/logout', [MahasiswaController::class, 'logout'])->name('mahasiswa.logout');
+
+    // Protected routes
+    Route::middleware(['auth', 'mahasiswa'])->group(function () {
+        Route::get('/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswa.dashboard');
+
+        // Pengajuan routes
+        Route::prefix('pengajuan')->name('mahasiswa.pengajuan.')->group(function () {
+            Route::get('/pilih', [PengajuanController::class, 'pilihJenis'])->name('pilih');
+            Route::get('/buat/{jenis}', [PengajuanController::class, 'create'])->name('create'); // Rute baru untuk membuat TA/PKL
+            Route::post('/', [PengajuanController::class, 'store'])->name('store');
+            Route::delete('/{pengajuan}', [PengajuanController::class, 'destroy'])->name('destroy');
+            Route::get('/', [PengajuanController::class, 'index'])->name('index');
+            Route::get('/{pengajuan}', [PengajuanController::class, 'show'])->name('show');
+            Route::put('/{pengajuan}/draft', [PengajuanController::class, 'simpanSebagaiDraft'])->name('draft');
+            Route::get('/{pengajuan}/edit', [PengajuanController::class, 'edit'])->name('edit');
+            Route::put('/{pengajuan}', [PengajuanController::class, 'update'])->name('update');
+        });
+
+        // Dokumen routes (jika masih diperlukan, ini hanya untuk melihat daftar dokumen)
+        Route::prefix('dokumen')->name('mahasiswa.dokumen.')->group(function () {
+            Route::get('/pengajuan/{pengajuan}', [DokumenController::class, 'index'])->name('index');
+            // Jika Anda memutuskan untuk memungkinkan penghapusan dokumen individual, tambahkan rute ini:
+            Route::delete('/{dokumen}', [DokumenController::class, 'destroy'])->name('destroy');
+        });
+    });
+});
+
+ini addalah routes admin:
+// Admin Routes
+Route::prefix('admin')->group(function () {
+    // Public routes (no middleware)
+    Route::get('/login', [AdminController::class, 'loginForm'])->name('admin.login');
+    Route::post('/login', [AdminController::class, 'login']);
+    Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+    
+    // Protected routes
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        
+        // Mahasiswa Management
+        Route::get('/mahasiswa', [AdminController::class, 'daftarMahasiswa'])->name('admin.mahasiswa.index');
+        Route::get('/mahasiswa/create', [AdminController::class, 'createMahasiswa'])->name('admin.mahasiswa.create');
+        Route::get('/mahasiswa/{mahasiswa}', [AdminController::class, 'detailMahasiswa'])->name('admin.mahasiswa.show');
+        Route::post('/mahasiswa', [AdminController::class, 'storeMahasiswa'])->name('admin.mahasiswa.store');
+        Route::get('/mahasiswa/{mahasiswa}/edit', [AdminController::class, 'editMahasiswa'])->name('admin.mahasiswa.edit');
+        Route::put('/mahasiswa/{mahasiswa}', [AdminController::class, 'updateMahasiswa'])->name('admin.mahasiswa.update');
+        Route::delete('/mahasiswa/{mahasiswa}', [AdminController::class, 'destroyMahasiswa'])->name('admin.mahasiswa.destroy');
+        
+        // Mahasiswa Import/Export
+        Route::get('/mahasiswa/import', [MahasiswaController::class, 'importForm'])->name('admin.mahasiswa.import.form');
+        Route::post('/mahasiswa/import', [MahasiswaController::class, 'import'])->name('admin.mahasiswa.import');
+        Route::get('/mahasiswas/export', [MahasiswaController::class, 'export'])->name('mahasiswas.export');
+        
+        // Dosen Management
+        Route::get('/dosen', [AdminController::class, 'daftarDosen'])->name('admin.dosen.index');
+        Route::get('/dosen/create', [AdminController::class, 'createDosen'])->name('admin.dosen.create');
+        Route::post('/dosen', [AdminController::class, 'storeDosen'])->name('admin.dosen.store');
+        Route::get('/dosen/{dosen}', [AdminController::class, 'detailDosen'])->name('admin.dosen.show');
+        Route::get('/dosen/{dosen}/edit', [AdminController::class, 'editDosen'])->name('admin.dosen.edit');
+        Route::put('/dosen/{dosen}', [AdminController::class, 'updateDosen'])->name('admin.dosen.update');
+        Route::delete('/dosen/{dosen}', [AdminController::class, 'destroyDosen'])->name('admin.dosen.destroy');
+        
+        // Dosen Import/Export
+        Route::get('/dosen/import', [DosenController::class, 'importForm'])->name('admin.dosen.import.form');
+        Route::post('/dosen/import', [DosenController::class, 'import'])->name('admin.dosen.import');
+        Route::get('/dosen/export', [AdminController::class, 'exportDosen'])->name('admin.dosen.export');
+        
+        // Pengajuan Management
+        Route::get('/pengajuan', [AdminController::class, 'daftarPengajuan'])->name('admin.pengajuan.index');
+        Route::get('/pengajuan/{pengajuan}', [AdminController::class, 'detailPengajuan'])->name('admin.pengajuan.show');
+        Route::put('/pengajuan/{pengajuan}/setujui', [AdminController::class, 'setujuiPengajuan'])->name('admin.pengajuan.setujui');
+        Route::put('/pengajuan/{pengajuan}/tolak', [AdminController::class, 'tolakPengajuan'])->name('admin.pengajuan.tolak');
+        
+        // Sidang Management
+        Route::get('/sidang', [AdminController::class, 'daftarSidang'])->name('admin.sidang.index');
+        Route::get('/sidang/kalender', [AdminController::class, 'kalenderSidang'])->name('admin.sidang.kalender');
+        Route::get('/sidang/{sidang}', [AdminController::class, 'detailSidang'])->name('admin.sidang.show');
+        Route::get('/sidang/export', [AdminController::class, 'exportSidang'])->name('admin.sidang.export');
+        
+        // Activities Log
+        Route::get('/activities', [AdminController::class, 'showActivities'])->name('admin.activities.index');
+    });
+});
+
+// Admin Pengajuan Verification Routes
+Route::prefix('admin/pengajuan-verifikasi')->name('admin.pengajuan.verifikasi.')
+    ->middleware(['auth', 'admin'])->group(function () {
+        Route::get('/', [PengajuanAdminController::class, 'index'])->name('index');
+        Route::get('/{pengajuan}', [PengajuanAdminController::class, 'show'])->name('show');
+        Route::post('/{pengajuan}/verify', [PengajuanAdminController::class, 'verify'])->name('verify');
+        Route::post('/{pengajuan}/reject', [PengajuanAdminController::class, 'reject'])->name('reject');
+    });

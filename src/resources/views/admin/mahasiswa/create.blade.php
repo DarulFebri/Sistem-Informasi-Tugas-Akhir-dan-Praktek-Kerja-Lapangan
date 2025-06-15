@@ -1,123 +1,74 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Mahasiswa</title>
+</head>
+<body>
 
-@section('title', 'Tambah Mahasiswa')
+    <h2>Tambah Mahasiswa</h2>
 
-@section('content')
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-header">
-            <h5>Tambah Data Mahasiswa</h5>
+    @if ($errors->any())
+        <div>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-        <div class="card-body">
-            <form action="{{ route('admin.mahasiswa.store') }}" method="POST">
-                @csrf
-                <div class="row g-3">
-                    <!-- Kolom 1 -->
-                    <div class="col-md-6">
-                        <label for="nomor_induk" class="form-label">NIM</label>
-                        <input type="text" class="form-control @error('nomor_induk') is-invalid @enderror" 
-                               id="nomor_induk" name="nomor_induk" value="{{ old('nomor_induk') }}" required>
-                        @error('nomor_induk')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                               id="name" name="name" value="{{ old('name') }}" required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <!-- Kolom 2 -->
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                               id="email" name="email" value="{{ old('email') }}" required>
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                               id="password" name="password" required>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <!-- Kolom 3 -->
-                    <div class="col-md-4">
-                        <label for="kelas" class="form-label">Kelas</label>
-                        <input type="text" class="form-control @error('kelas') is-invalid @enderror" 
-                               id="kelas" name="kelas" value="{{ old('kelas') }}" required>
-                        @error('kelas')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <label for="jurusan" class="form-label">Jurusan</label>
-                        <select class="form-select @error('jurusan') is-invalid @enderror" 
-                                id="jurusan" name="jurusan" required>
-                            <option value="">Pilih Jurusan</option>
-                            <option value="Teknik Informatika" {{ old('jurusan') == 'Teknik Informatika' ? 'selected' : '' }}>Teknik Informatika</option>
-                            <option value="Sistem Informasi" {{ old('jurusan') == 'Sistem Informasi' ? 'selected' : '' }}>Sistem Informasi</option>
-                            <option value="Teknik Komputer" {{ old('jurusan') == 'Teknik Komputer' ? 'selected' : '' }}>Teknik Komputer</option>
-                        </select>
-                        @error('jurusan')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <label for="program_studi" class="form-label">Program Studi</label>
-                        <input type="text" class="form-control @error('program_studi') is-invalid @enderror" 
-                               id="program_studi" name="program_studi" value="{{ old('program_studi') }}" required>
-                        @error('program_studi')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <!-- Kolom 4 -->
-                    <div class="col-md-6">
-                        <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                        <select class="form-select @error('jenis_kelamin') is-invalid @enderror" 
-                                id="jenis_kelamin" name="jenis_kelamin" required>
-                            <option value="">Pilih Jenis Kelamin</option>
-                            <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                            <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
-                        </select>
-                        @error('jenis_kelamin')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select @error('status') is-invalid @enderror" 
-                                id="status" name="status" required>
-                            <option value="Aktif" {{ old('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                            <option value="Non-Aktif" {{ old('status') == 'Non-Aktif' ? 'selected' : '' }}>Non-Aktif</option>
-                            <option value="Cuti" {{ old('status') == 'Cuti' ? 'selected' : '' }}>Cuti</option>
-                        </select>
-                        @error('status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <!-- Tombol Submit -->
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                        <a href="{{ route('admin.mahasiswa.index') }}" class="btn btn-secondary">Batal</a>
-                    </div>
-                </div>
-            </form>
+    @endif
+
+    <form method="POST" action="{{ route('admin.mahasiswa.store') }}">
+        @csrf
+
+        <div>
+            <label for="nim">NIM</label>
+            <input type="text" name="nim" id="nim" value="{{ old('nim') }}" required>
         </div>
-    </div>
-</div>
-@endsection
+
+        <div>
+            <label for="nama_lengkap">Nama Lengkap</label>
+            <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap') }}" required>
+        </div>
+
+        <div>
+            <label for="jurusan">Jurusan</label>
+            <input type="text" name="jurusan" id="jurusan" value="{{ old('jurusan') }}" required>
+        </div>
+
+        <div>
+            <label for="prodi">Prodi</label>
+            <input type="text" name="prodi" id="prodi" value="{{ old('prodi') }}" required>
+        </div>
+
+        <div>
+            <label for="jenis_kelamin">Jenis Kelamin</label>
+            <select name="jenis_kelamin" id="jenis_kelamin" required>
+                <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="kelas">Kelas</label>
+            <input type="text" name="kelas" id="kelas" value="{{ old('kelas') }}" required>
+        </div>
+
+        {{-- Tambahkan field email dan password ini --}}
+        <div>
+            <label for="email">Email (untuk Login)</label>
+            <input type="email" name="email" id="email" value="{{ old('email') }}" required>
+        </div>
+
+        <div>
+            <label for="password">Password (untuk Login)</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        {{-- Akhir tambahan --}}
+
+        <button type="submit">Simpan</button>
+    </form>
+
+</body>
+</html>

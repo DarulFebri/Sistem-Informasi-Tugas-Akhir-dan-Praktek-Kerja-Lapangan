@@ -1,0 +1,290 @@
+struktur database:
+mysql> DESCRIBE activities;
++------------+-----------------+------+-----+---------+----------------+
+| Field      | Type            | Null | Key | Default | Extra          |
++------------+-----------------+------+-----+---------+----------------+
+| id         | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| user_id    | bigint unsigned | YES  | MUL | NULL    |                |
+| activity   | varchar(255)    | NO   |     | NULL    |                |
+| module     | varchar(255)    | YES  |     | NULL    |                |
+| ip_address | varchar(255)    | YES  |     | NULL    |                |
+| user_agent | text            | YES  |     | NULL    |                |
+| created_at | timestamp       | YES  |     | NULL    |                |
+| updated_at | timestamp       | YES  |     | NULL    |                |
++------------+-----------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
+
+mysql> DESCRIBE admins;
++------------+-----------------+------+-----+---------+----------------+
+| Field      | Type            | Null | Key | Default | Extra          |
++------------+-----------------+------+-----+---------+----------------+
+| id         | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| nama       | varchar(255)    | NO   |     | NULL    |                |
+| email      | varchar(255)    | NO   | UNI | NULL    |                |
+| created_at | timestamp       | YES  |     | NULL    |                |
+| updated_at | timestamp       | YES  |     | NULL    |                |
++------------+-----------------+------+-----+---------+----------------+
+5 rows in set (0.01 sec)
+
+mysql> DESCRIBE cache;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| key        | varchar(255) | NO   | PRI | NULL    |       |
+| value      | mediumtext   | NO   |     | NULL    |       |
+| expiration | int          | NO   |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> DESCRIBE cache_locks;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| key        | varchar(255) | NO   | PRI | NULL    |       |
+| owner      | varchar(255) | NO   |     | NULL    |       |
+| expiration | int          | NO   |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> DESCRIBE dokumens;
++--------------+-----------------+------+-----+---------+----------------+
+| Field        | Type            | Null | Key | Default | Extra          |
++--------------+-----------------+------+-----+---------+----------------+
+| id           | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| pengajuan_id | bigint unsigned | NO   | MUL | NULL    |                |
+| nama_file    | varchar(255)    | NO   |     | NULL    |                |
+| path_file    | varchar(255)    | NO   |     | NULL    |                |
+| created_at   | timestamp       | YES  |     | NULL    |                |
+| updated_at   | timestamp       | YES  |     | NULL    |                |
++--------------+-----------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> DESCRIBE dosens;
++----------------+-----------------+------+-----+---------+----------------+
+| Field          | Type            | Null | Key | Default | Extra          |
++----------------+-----------------+------+-----+---------+----------------+
+| id             | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| user_id        | bigint unsigned | YES  | UNI | NULL    |                |
+| nidn           | varchar(255)    | NO   | UNI | NULL    |                |
+| nama           | varchar(255)    | NO   |     | NULL    |                |
+| jurusan        | varchar(255)    | NO   |     | NULL    |                |
+| prodi          | varchar(255)    | NO   |     | NULL    |                |
+| jenis_kelamin  | varchar(255)    | NO   |     | NULL    |                |
+| email          | varchar(255)    | YES  | UNI | NULL    |                |
+| password       | varchar(255)    | NO   |     | NULL    |                |
+| remember_token | varchar(100)    | YES  |     | NULL    |                |
+| created_at     | timestamp       | YES  |     | NULL    |                |
+| updated_at     | timestamp       | YES  |     | NULL    |                |
++----------------+-----------------+------+-----+---------+----------------+
+12 rows in set (0.00 sec)
+
+mysql> DESCRIBE failed_jobs;
++------------+-----------------+------+-----+-------------------+-------------------+
+| Field      | Type            | Null | Key | Default           | Extra             |
++------------+-----------------+------+-----+-------------------+-------------------+
+| id         | bigint unsigned | NO   | PRI | NULL              | auto_increment    |
+| uuid       | varchar(255)    | NO   | UNI | NULL              |                   |
+| connection | text            | NO   |     | NULL              |                   |
+| queue      | text            | NO   |     | NULL              |                   |
+| payload    | longtext        | NO   |     | NULL              |                   |
+| exception  | longtext        | NO   |     | NULL              |                   |
+| failed_at  | timestamp       | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++------------+-----------------+------+-----+-------------------+-------------------+
+7 rows in set (0.01 sec)
+
+mysql> DESCRIBE job_batches;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| id             | varchar(255) | NO   | PRI | NULL    |       |
+| name           | varchar(255) | NO   |     | NULL    |       |
+| total_jobs     | int          | NO   |     | NULL    |       |
+| pending_jobs   | int          | NO   |     | NULL    |       |
+| failed_jobs    | int          | NO   |     | NULL    |       |
+| failed_job_ids | longtext     | NO   |     | NULL    |       |
+| options        | mediumtext   | YES  |     | NULL    |       |
+| cancelled_at   | int          | YES  |     | NULL    |       |
+| created_at     | int          | NO   |     | NULL    |       |
+| finished_at    | int          | YES  |     | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> DESCRIBE jobs;
++--------------+------------------+------+-----+---------+----------------+
+| Field        | Type             | Null | Key | Default | Extra          |
++--------------+------------------+------+-----+---------+----------------+
+| id           | bigint unsigned  | NO   | PRI | NULL    | auto_increment |
+| queue        | varchar(255)     | NO   | MUL | NULL    |                |
+| payload      | longtext         | NO   |     | NULL    |                |
+| attempts     | tinyint unsigned | NO   |     | NULL    |                |
+| reserved_at  | int unsigned     | YES  |     | NULL    |                |
+| available_at | int unsigned     | NO   |     | NULL    |                |
+| created_at   | int unsigned     | NO   |     | NULL    |                |
++--------------+------------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> DESCRIBE kajurs;
++------------+-----------------+------+-----+---------+----------------+
+| Field      | Type            | Null | Key | Default | Extra          |
++------------+-----------------+------+-----+---------+----------------+
+| id         | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| nama       | varchar(255)    | NO   |     | NULL    |                |
+| email      | varchar(255)    | NO   | UNI | NULL    |                |
+| created_at | timestamp       | YES  |     | NULL    |                |
+| updated_at | timestamp       | YES  |     | NULL    |                |
++------------+-----------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> DESCRIBE kaprodis;
++------------+-----------------+------+-----+---------+----------------+
+| Field      | Type            | Null | Key | Default | Extra          |
++------------+-----------------+------+-----+---------+----------------+
+| id         | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| nama       | varchar(255)    | NO   |     | NULL    |                |
+| email      | varchar(255)    | NO   | UNI | NULL    |                |
+| created_at | timestamp       | YES  |     | NULL    |                |
+| updated_at | timestamp       | YES  |     | NULL    |                |
++------------+-----------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> DESCRIBE mahasiswas;
++---------------+-----------------+------+-----+---------+----------------+
+| Field         | Type            | Null | Key | Default | Extra          |
++---------------+-----------------+------+-----+---------+----------------+
+| id            | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| nim           | varchar(255)    | NO   | UNI | NULL    |                |
+| nama_lengkap  | varchar(255)    | NO   |     | NULL    |                |
+| jurusan       | varchar(255)    | NO   |     | NULL    |                |
+| prodi         | varchar(255)    | NO   |     | NULL    |                |
+| jenis_kelamin | varchar(255)    | NO   |     | NULL    |                |
+| email         | varchar(255)    | NO   | UNI | NULL    |                |
+| kelas         | varchar(255)    | NO   |     | NULL    |                |
+| created_at    | timestamp       | YES  |     | NULL    |                |
+| updated_at    | timestamp       | YES  |     | NULL    |                |
+| user_id       | bigint unsigned | NO   | UNI | NULL    |                |
++---------------+-----------------+------+-----+---------+----------------+
+11 rows in set (0.00 sec)
+
+mysql> DESCRIBE migrations;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int unsigned | NO   | PRI | NULL    | auto_increment |
+| migration | varchar(255) | NO   |     | NULL    |                |
+| batch     | int          | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+3 rows in set (0.01 sec)
+
+mysql> DESCRIBE notifications;
++-----------------+-----------------+------+-----+---------+-------+
+| Field           | Type            | Null | Key | Default | Extra |
++-----------------+-----------------+------+-----+---------+-------+
+| id              | char(36)        | NO   | PRI | NULL    |       |
+| type            | varchar(255)    | NO   |     | NULL    |       |
+| notifiable_type | varchar(255)    | NO   | MUL | NULL    |       |
+| notifiable_id   | bigint unsigned | NO   |     | NULL    |       |
+| data            | text            | NO   |     | NULL    |       |
+| read_at         | timestamp       | YES  |     | NULL    |       |
+| created_at      | timestamp       | YES  |     | NULL    |       |
+| updated_at      | timestamp       | YES  |     | NULL    |       |
++-----------------+-----------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> DESCRIBE password_reset_tokens;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| email      | varchar(255) | NO   | PRI | NULL    |       |
+| token      | varchar(255) | NO   |     | NULL    |       |
+| created_at | timestamp    | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> DESCRIBE pengajuans;
++-----------------+-----------------+------+-----+---------+----------------+
+| Field           | Type            | Null | Key | Default | Extra          |
++-----------------+-----------------+------+-----+---------+----------------+
+| id              | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| mahasiswa_id    | bigint unsigned | NO   | MUL | NULL    |                |
+| jenis_pengajuan | varchar(255)    | NO   |     | NULL    |                |
+| status          | varchar(255)    | NO   |     | NULL    |                |
+| catatan_admin   | text            | YES  |     | NULL    |                |
+| catatan_kaprodi | text            | YES  |     | NULL    |                |
+| created_at      | timestamp       | YES  |     | NULL    |                |
+| updated_at      | timestamp       | YES  |     | NULL    |                |
++-----------------+-----------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
+
+mysql> DESCRIBE personal_access_tokens;
++----------------+-----------------+------+-----+---------+----------------+
+| Field          | Type            | Null | Key | Default | Extra          |
++----------------+-----------------+------+-----+---------+----------------+
+| id             | bigint unsigned | NO   | PRI | NULL    | auto_increment |
+| tokenable_type | varchar(255)    | NO   | MUL | NULL    |                |
+| tokenable_id   | bigint unsigned | NO   |     | NULL    |                |
+| name           | varchar(255)    | NO   |     | NULL    |                |
+| token          | varchar(64)     | NO   | UNI | NULL    |                |
+| abilities      | text            | YES  |     | NULL    |                |
+| last_used_at   | timestamp       | YES  |     | NULL    |                |
+| expires_at     | timestamp       | YES  |     | NULL    |                |
+| created_at     | timestamp       | YES  |     | NULL    |                |
+| updated_at     | timestamp       | YES  |     | NULL    |                |
++----------------+-----------------+------+-----+---------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> DESCRIBE sessions;
++---------------+-----------------+------+-----+---------+-------+
+| Field         | Type            | Null | Key | Default | Extra |
++---------------+-----------------+------+-----+---------+-------+
+| id            | varchar(255)    | NO   | PRI | NULL    |       |
+| user_id       | bigint unsigned | YES  | MUL | NULL    |       |
+| ip_address    | varchar(45)     | YES  |     | NULL    |       |
+| user_agent    | text            | YES  |     | NULL    |       |
+| payload       | longtext        | NO   |     | NULL    |       |
+| last_activity | int             | NO   | MUL | NULL    |       |
++---------------+-----------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> DESCRIBE sidangs;
++-------------------------------+--------------------------------------------------------------------------------------------------------+------+-----+-------------------+----------------+
+| Field                         | Type                                                                                                   | Null | Key | Default           | Extra          |
++-------------------------------+--------------------------------------------------------------------------------------------------------+------+-----+-------------------+----------------+
+| id                            | bigint unsigned                                                                                        | NO   | PRI | NULL              | auto_increment |
+| pengajuan_id                  | bigint unsigned                                                                                        | NO   | MUL | NULL              |                |
+| status                        | enum('belum_dijadwalkan','dosen_ditunjuk','dosen_menyetujui','dijadwalkan','ditolak_jadwal','selesai') | NO   |     | belum_dijadwalkan |                |
+| ketua_sidang_dosen_id         | bigint unsigned                                                                                        | YES  | MUL | NULL              |                |
+| persetujuan_ketua_sidang      | enum('pending','setuju','tolak')                                                                       | NO   |     | pending           |                |
+| sekretaris_sidang_dosen_id    | bigint unsigned                                                                                        | YES  | MUL | NULL              |                |
+| persetujuan_sekretaris_sidang | enum('pending','setuju','tolak')                                                                       | NO   |     | pending           |                |
+| anggota1_sidang_dosen_id      | bigint unsigned                                                                                        | YES  | MUL | NULL              |                |
+| persetujuan_anggota1_sidang   | enum('pending','setuju','tolak')                                                                       | NO   |     | pending           |                |
+| anggota2_sidang_dosen_id      | bigint unsigned                                                                                        | YES  | MUL | NULL              |                |
+| persetujuan_anggota2_sidang   | enum('pending','setuju','tolak')                                                                       | NO   |     | pending           |                |
+| tanggal_waktu_sidang          | datetime                                                                                               | YES  |     | NULL              |                |
+| ruangan_sidang                | varchar(255)                                                                                           | YES  |     | NULL              |                |
+| created_at                    | timestamp                                                                                              | YES  |     | NULL              |                |
+| updated_at                    | timestamp                                                                                              | YES  |     | NULL              |                |
+| dosen_pembimbing_id           | bigint unsigned                                                                                        | YES  | MUL | NULL              |                |
+| persetujuan_dosen_pembimbing  | enum('pending','setuju','tolak')                                                                       | NO   |     | pending           |                |
+| dosen_penguji1_id             | bigint unsigned                                                                                        | YES  | MUL | NULL              |                |
+| persetujuan_dosen_penguji1    | enum('pending','setuju','tolak')                                                                       | NO   |     | pending           |                |
+| dosen_penguji2_id             | bigint unsigned                                                                                        | YES  | MUL | NULL              |                |
++-------------------------------+--------------------------------------------------------------------------------------------------------+------+-----+-------------------+----------------+
+20 rows in set (0.01 sec)
+
+mysql> DESCRIBE users;
++-------------------+-----------------+------+-----+-----------+----------------+
+| Field             | Type            | Null | Key | Default   | Extra          |
++-------------------+-----------------+------+-----+-----------+----------------+
+| id                | bigint unsigned | NO   | PRI | NULL      | auto_increment |
+| name              | varchar(255)    | NO   |     | NULL      |                |
+| email             | varchar(255)    | NO   | UNI | NULL      |                |
+| email_verified_at | timestamp       | YES  |     | NULL      |                |
+| password          | varchar(255)    | NO   |     | NULL      |                |
+| remember_token    | varchar(100)    | YES  |     | NULL      |                |
+| created_at        | timestamp       | YES  |     | NULL      |                |
+| updated_at        | timestamp       | YES  |     | NULL      |                |
+| role              | varchar(255)    | NO   | MUL | mahasiswa |                |
++-------------------+-----------------+------+-----+-----------+----------------+
+9 rows in set (0.00 sec)
+

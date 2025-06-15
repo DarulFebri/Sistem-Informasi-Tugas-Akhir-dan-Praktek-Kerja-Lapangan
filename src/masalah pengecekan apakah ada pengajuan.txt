@@ -1,0 +1,84 @@
+masalah pengecekan apakah ada pengajuan
+jika terdeteksi ada pengajuan, maka sistem tidak adakan memeprbolehkan mahasiswa membuat pengajuan
+
+mahasiswa/pengajuan/index.blade.php:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pengajuan Saya</title>
+</head>
+<body>
+
+    <h2>Daftar Pengajuan Sidang Saya</h2>
+
+    @if (session('success'))
+        <div style="color: green;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div style="color: red;">
+            {{ session('error' )}}
+        </div>
+    @endif
+
+    @if ($pengajuans->count() > 0)
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Jenis Pengajuan</th>
+                    <th>Status</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($pengajuans as $pengajuan)
+                    <tr>
+                        <td>{{ $pengajuan->id }}</td>
+                        <td>{{ ucfirst($pengajuan->jenis_pengajuan) }}</td>
+                        <td>{{ str_replace('_', ' ', strtoupper($pengajuan->status)) }}</td>
+                        <td>{{ $pengajuan->created_at->format('d M Y H:i') }}</td>
+                        <td>
+                            <a href="{{ route('mahasiswa.pengajuan.show', $pengajuan->id) }}">Lihat Detail</a>
+
+                            {{-- Tambahkan logika untuk status lain di sini --}}
+                            @if ($pengajuan->status === 'draft')
+                                <a href="{{ route('mahasiswa.pengajuan.edit', $pengajuan->id) }}">Edit</a>
+                                <form action="{{ route('mahasiswa.pengajuan.destroy', $pengajuan->id) }}" method="POST" style="display:inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?')" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            @elseif ($pengajuan->status === 'dosen_ditunjuk')
+                                {{-- Mahasiswa bisa melihat bahwa dosen sudah ditunjuk --}}
+                                <span style="color: blue;">(Dosen Ditunjuk)</span>
+                                {{-- Mungkin ada link ke jadwal sidang jika sudah tersedia --}}
+                                {{-- <a href="{{ route('mahasiswa.sidang.jadwal', $pengajuan->id) }}">Lihat Jadwal Sidang</a> --}}
+                            @elseif ($pengajuan->status === 'ditolak_admin' || $pengajuan->status === 'ditolak_kaprodi')
+                                {{-- Jika ditolak, mungkin ada opsi untuk mengajukan ulang atau mengedit --}}
+                                <span style="color: orange;">(Ditolak)</span>
+                                <a href="{{ route('mahasiswa.pengajuan.edit', $pengajuan->id) }}">Ajukan Ulang</a>
+                            @else
+                                {{-- Status lainnya yang hanya untuk dilihat --}}
+                                <span style="color: gray;">(Menunggu Proses)</span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <p>Anda belum memiliki pengajuan. Silakan buat pengajuan baru.</p>
+    @endif
+    <br>
+    <a href="{{ route('mahasiswa.dashboard') }}">Kembali ke Dashboard</a>
+    <a href="{{ route('mahasiswa.pengajuan.pilih') }}">Buat Pengajuan Baru</a>
+
+</body>
+</html>
+

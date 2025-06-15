@@ -1,55 +1,58 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mahasiswa</title>
+</head>
+<body>
 
-@section('title', 'Data Mahasiswa')
+    <h2>Daftar Mahasiswa</h2>
 
-@section('content')
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5>Data Mahasiswa</h5>
-            <a href="{{ route('admin.mahasiswa.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus"></i> Tambah Mahasiswa
-            </a>
+    @if (session('success'))
+        <div>
+            {{ session('success') }}
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>NIM</th>
-                            <th>Nama</th>
-                            <th>Kelas</th>
-                            <th>Jurusan</th>
-                            <th>Prodi</th>
-                            <th>JK</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($mahasiswas as $mhs)
-                        <tr>
-                            <td>{{ $mhs->nomor_induk }}</td>
-                            <td>{{ $mhs->name }}</td>
-                            <td>{{ $mhs->kelas }}</td>
-                            <td>{{ $mhs->jurusan }}</td>
-                            <td>{{ $mhs->program_studi }}</td>
-                            <td>{{ $mhs->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-info">Detail</a>
-                                <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="#" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            {{ $mahasiswas->links() }}
-        </div>
-    </div>
-</div>
-@endsection
+    @endif
+
+    <a href="{{ route('admin.mahasiswa.create') }}">Tambah Mahasiswa</a>
+    <a href="{{ route('admin.mahasiswa.import') }}">Import Mahasiswa</a>
+    <a href="{{ route('mahasiswas.export') }}" class="btn btn-success"><i class="fas fa-file-excel"></i> Export Mahasiswa</a> 
+    <a href="{{ route('admin.dashboard') }}">Kembali Ke Dashboard</a>
+        <table>
+        <thead>
+            <tr>
+                <th>NIM</th>
+                <th>Nama Lengkap</th>
+                <th>Jurusan</th>
+                <th>Prodi</th>
+                <th>Jenis Kelamin</th>
+                <th>Kelas</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($mahasiswas as $mahasiswa)
+                <tr>
+                    <td>{{ $mahasiswa->nim }}</td>
+                    <td>{{ $mahasiswa->nama_lengkap }}</td>
+                    <td>{{ $mahasiswa->jurusan }}</td>
+                    <td>{{ $mahasiswa->prodi }}</td>
+                    <td>{{ $mahasiswa->jenis_kelamin }}</td>
+                    <td>{{ $mahasiswa->kelas }}</td>
+                    <td>
+                        <a href="{{ route('admin.mahasiswa.show', $mahasiswa->id) }}">Detail</a>
+                        <a href="{{ route('admin.mahasiswa.edit', $mahasiswa->id) }}">Edit</a>
+                        <form action="{{ route('admin.mahasiswa.destroy', $mahasiswa->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus?')">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+</body>
+</html>

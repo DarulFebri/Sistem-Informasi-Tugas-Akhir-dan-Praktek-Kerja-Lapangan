@@ -1,0 +1,316 @@
+routes saya yang berhubungan dengan dosen:
+// Dosen Routes
+Route::prefix('dosen')->group(function () {
+    // Public routes
+    Route::get('/login', [DosenController::class, 'loginForm'])->name('dosen.login');
+    Route::post('/login', [DosenController::class, 'login']);
+    Route::post('/logout', [DosenController::class, 'logout'])->name('dosen.logout');
+    
+    // Protected routes
+    Route::middleware(['auth', 'dosen'])->group(function () {
+        Route::get('/dashboard', [DosenController::class, 'dashboard'])->name('dosen.dashboard');
+        Route::get('/pengajuan-saya', [DosenController::class, 'pengajuanSaya'])->name('dosen.pengajuan.saya');
+        
+        // Pengajuan routes
+        Route::get('/pengajuan', [DosenController::class, 'daftarPengajuan'])->name('dosen.pengajuan.index');
+        Route::get('/pengajuan/{pengajuan}', [DosenController::class, 'detailPengajuan'])->name('dosen.pengajuan.show');
+        
+        // Dokumen validation
+        Route::put('/dokumen/{dokumen}/setujui', [DosenController::class, 'setujuiDokumen'])->name('dosen.dokumen.setujui');
+        Route::put('/dokumen/{dokumen}/tolak', [DosenController::class, 'tolakDokumen'])->name('dosen.dokumen.tolak');
+        
+        // Jadwal sidang
+        Route::get('/pengajuan/{pengajuan}/jadwal', [DosenController::class, 'formJadwalSidang'])->name('dosen.jadwal.create');
+        Route::post('/pengajuan/{pengajuan}/jadwal', [DosenController::class, 'simpanJadwalSidang'])->name('dosen.jadwal.store');
+        Route::get('/jadwal/{sidang}', [DosenController::class, 'detailJadwalSidang'])->name('dosen.jadwal.show');
+        
+        // Sidang routes
+        Route::get('/sidang/{sidang}/laporan', [DosenController::class, 'unduhLaporan'])->name('dosen.sidang.laporan');
+        Route::get('/sidang/{sidang}/nilai', [DosenController::class, 'formNilaiSidang'])->name('dosen.sidang.nilai.edit');
+        Route::post('/sidang/{sidang}/nilai', [DosenController::class, 'simpanNilaiSidang'])->name('dosen.sidang.nilai.store');
+        
+        // Import routes
+        Route::get('/import/form', [DosenController::class, 'importForm'])->name('dosen.import.form');
+        Route::post('/import', [DosenController::class, 'import'])->name('dosen.import');
+    });
+});
+
+routes saya yang berhubungan dengan kaprodi:
+// Kaprodi Routes
+Route::prefix('kaprodi')->group(function () {
+    // Public routes
+    Route::get('/login', [KaprodiController::class, 'loginForm'])->name('kaprodi.login');
+    Route::post('/login', [KaprodiController::class, 'login']);
+    Route::post('/logout', [KaprodiController::class, 'logout'])->name('kaprodi.logout');
+    
+    // Protected routes
+    Route::middleware(['auth', 'kaprodi'])->group(function () {
+        Route::get('/dashboard', [KaprodiController::class, 'dashboard'])->name('kaprodi.dashboard');
+        Route::get('/dosen', [KaprodiController::class, 'daftarDosen'])->name('kaprodi.dosen.index');
+    });
+});
+
+// Kaprodi Pengajuan Routes
+Route::prefix('kaprodi/pengajuan')->name('kaprodi.pengajuan.')
+    ->middleware(['auth', 'kaprodi'])->group(function () {
+        Route::get('/', [PengajuanKaprodiController::class, 'index'])->name('index');
+        Route::get('/{pengajuan}', [PengajuanKaprodiController::class, 'show'])->name('show');
+        Route::get('/{pengajuan}/jadwal', [PengajuanKaprodiController::class, 'jadwalSidangForm'])->name('jadwal.form');
+        Route::put('/{pengajuan}/jadwal', [PengajuanKaprodiController::class, 'storeUpdateJadwalSidang'])->name('jadwal.update');
+        Route::post('/{pengajuan}/setujui', [PengajuanKaprodiController::class, 'setujui'])->name('setujui');
+        Route::post('/{pengajuan}/tolak', [PengajuanKaprodiController::class, 'tolak'])->name('tolak');
+        Route::post('/{pengajuan}/finalkan-jadwal', [PengajuanKaprodiController::class, 'setJadwalFinal'])->name('jadwal.final');
+    });
+
+
+ini adalah potongan kode dari DosenController:
+public function pengajuanSaya()
+{
+        $user = Auth::user();
+
+        // Pastikan user yang login memang terkait dengan model Dosen
+        if (!$user || !$user->dosen) {
+            return redirect()->route('dosen.dashboard')->with('error', 'Akses ditolak. Anda tidak terdaftar sebagai dosen.');
+        }
+
+        $dosenId = Auth::user()->dosen->id;
+
+        // Mengambil pengajuan di mana dosen ini terlibat
+        // Kita akan mencari di tabel 'sidangs' karena semua peran dosen ada di sana
+        $pengajuansInvolved = Pengajuan::whereHas('sidang', function ($query) use ($dosenId) {
+            $query->where('dosen_pembimbing_id', $dosenId)
+                  ->orWhere('dosen_penguji1_id', $dosenId)
+                  ->orWhere('dosen_penguji2_id', $dosenId)
+                  ->orWhere('ketua_sidang_dosen_id', $dosenId)
+                  ->orWhere('sekretaris_sidang_dosen_id', $dosenId)
+                  ->orWhere('anggota1_sidang_dosen_id', $dosenId)
+                  ->orWhere('anggota2_sidang_dosen_id', $dosenId);
+        })
+        ->with([
+            'mahasiswa',
+            'sidang.dosenPembimbing', // Eager load semua relasi dosen yang mungkin terkait
+            'sidang.dosenPenguji1',
+            'sidang.dosenPenguji2',
+            'sidang.ketuaSidang',
+            'sidang.sekretarisSidang',
+            'sidang.anggota1Sidang',
+            'sidang.anggota2Sidang'
+        ])
+        ->orderBy('updated_at', 'desc')
+        ->get();
+
+        return view('dosen.pengajuan_saya', compact('pengajuansInvolved'));
+}
+
+ini adalah view dosen/pengajuan/pengajuan_saya.blade.php:
+<body>
+    <div class="container">
+        <h2>Daftar Pengajuan yang Melibatkan Anda</h2>
+        <a href="{{ route('dosen.dashboard') }}" class="back-link">&larr; Kembali ke Dashboard</a>
+
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if ($pengajuansInvolved->isEmpty())
+            <p class="no-data">Tidak ada pengajuan yang melibatkan Anda saat ini.</p>
+        @else
+            {{-- Wrapper table-responsive dihapus --}}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Pengajuan</th>
+                        <th>Mahasiswa</th>
+                        <th>Jenis</th>
+                        <th>Status</th>
+                        <th>Peran Anda</th>
+                        {{-- Kolom Pembimbing, Penguji 1, Penguji 2 dihapus --}}
+                        <th>Ketua Sidang</th>
+                        <th>Sekretaris</th>
+                        <th>Anggota 1</th>
+                        <th>Anggota 2</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($pengajuansInvolved as $pengajuan)
+                        <tr>
+                            <td>{{ $pengajuan->id }}</td>
+                            <td>{{ $pengajuan->mahasiswa->nama_lengkap }} ({{ $pengajuan->mahasiswa->nim }})</td>
+                            <td>{{ strtoupper($pengajuan->jenis_pengajuan) }}</td>
+                            <td>{{ str_replace('_', ' ', $pengajuan->status) }}</td>
+                            <td>
+                                @php
+                                    $dosenId = Auth::user()->dosen->id;
+                                    $roles = [];
+                                    if ($pengajuan->sidang) {
+                                        if ($pengajuan->sidang->dosen_pembimbing_id == $dosenId) $roles[] = 'Pembimbing';
+                                        if ($pengajuan->sidang->dosen_penguji1_id == $dosenId) $roles[] = 'Penguji 1';
+                                        if ($pengajuan->sidang->dosen_penguji2_id == $dosenId) $roles[] = 'Penguji 2';
+                                        if ($pengajuan->sidang->ketua_sidang_dosen_id == $dosenId) $roles[] = 'Ketua Sidang';
+                                        if ($pengajuan->sidang->sekretaris_sidang_dosen_id == $dosenId) $roles[] = 'Sekretaris Sidang';
+                                        if ($pengajuan->sidang->anggota1_sidang_dosen_id == $dosenId) $roles[] = 'Anggota Sidang 1';
+                                        if ($pengajuan->sidang->anggota2_sidang_dosen_id == $dosenId) $roles[] = 'Anggota Sidang 2';
+                                    }
+                                @endphp
+                                {{ empty($roles) ? 'N/A' : implode(', ', $roles) }}
+                            </td>
+                            {{-- Data cell untuk Pembimbing, Penguji 1, Penguji 2 dihapus --}}
+                            <td>{{ $pengajuan->sidang->ketuaSidang->nama ?? 'N/A' }}</td>
+                            <td>{{ $pengajuan->sidang->sekretarisSidang->nama ?? 'N/A' }}</td>
+                            <td>{{ $pengajuan->sidang->anggota1Sidang->nama ?? 'N/A' }}</td>
+                            <td>{{ $pengajuan->sidang->anggota2Sidang->nama ?? 'N/A' }}</td>
+                            <td>
+                                <a href="{{ route('dosen.pengajuan.show', $pengajuan->id) }}" class="btn btn-info">Detail</a>
+                                {{-- Contoh Aksi Spesifik berdasarkan status dan peran --}}
+                                @if ($pengajuan->status === 'dosen_ditunjuk' && $pengajuan->sidang)
+                                    @if (in_array($dosenId, [$pengajuan->sidang->dosen_pembimbing_id, $pengajuan->sidang->dosen_penguji1_id, $pengajuan->sidang->dosen_penguji2_id]))
+                                        {{-- Link ke form nilai jika dosen ini adalah pembimbing/penguji --}}
+                                        <a href="{{ route('dosen.sidang.nilai.edit', $pengajuan->sidang->id) }}" class="btn btn-warning">Beri Nilai</a>
+                                    @endif
+                                    @if ($pengajuan->sidang->ketua_sidang_dosen_id == $dosenId && is_null($pengajuan->sidang->tanggal_waktu_sidang))
+                                        {{-- Link ke form jadwal jika dosen ini ketua sidang dan jadwal belum ada --}}
+                                        <a href="{{ route('dosen.jadwal.create', $pengajuan->id) }}" class="btn btn-info" style="background-color: #6c757d;">Jadwalkan</a>
+                                    @endif
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+</body>
+
+ini adalah view dosen/pengajuan/show.blade.php:
+<body>
+    <div class="container">
+        <h2>Detail Pengajuan - {{ strtoupper($pengajuan->jenis_pengajuan) }}</h2>
+
+        <div class="detail-group">
+            <label>Mahasiswa:</label>
+            <p>{{ $pengajuan->mahasiswa->nama_lengkap }} ({{ $pengajuan->mahasiswa->nim }})</p>
+        </div>
+
+        <div class="detail-group">
+            <label>Jenis Pengajuan:</label>
+            <p>{{ strtoupper($pengajuan->jenis_pengajuan) }}</p>
+        </div>
+
+        @if ($pengajuan->judul_pengajuan)
+            <div class="detail-group">
+                <label>Judul Pengajuan:</label>
+                <p>{{ $pengajuan->judul_pengajuan }}</p>
+            </div>
+        @endif
+
+        <div class="detail-group">
+            <label>Status Pengajuan:</label>
+            <p>{{ str_replace('_', ' ', $pengajuan->status) }}</p>
+        </div>
+
+        @if ($pengajuan->catatan_admin)
+            <div class="detail-group">
+                <label>Catatan Admin:</label>
+                <p>{{ $pengajuan->catatan_admin }}</p>
+            </div>
+        @endif
+
+        @if ($pengajuan->catatan_kaprodi)
+            <div class="detail-group">
+                <label>Catatan Kaprodi:</label>
+                <p>{{ $pengajuan->catatan_kaprodi }}</p>
+            </div>
+        @endif
+
+        <h3>Informasi Sidang:</h3>
+        @if ($pengajuan->sidang)
+            <div class="detail-group">
+                <label>Tanggal & Waktu Sidang:</label>
+                <p>{{ $pengajuan->sidang->tanggal_waktu_sidang ? \Carbon\Carbon::parse($pengajuan->sidang->tanggal_waktu_sidang)->format('d F Y H:i') : 'Belum Dijadwalkan' }}</p>
+            </div>
+            <div class="detail-group">
+                <label>Ruangan Sidang:</label>
+                <p>{{ $pengajuan->sidang->ruangan_sidang ?? 'Belum Ditentukan' }}</p>
+            </div>
+            {{-- Bagian Dosen Pembimbing dan Penguji dihapus sesuai permintaan --}}
+            {{--
+            <div class="detail-group">
+                <label>Dosen Pembimbing:</label>
+                <p>{{ $pengajuan->sidang->dosenPembimbing->nama ?? 'N/A' }}</p>
+            </div>
+            <div class="detail-group">
+                <label>Dosen Penguji 1:</label>
+                <p>{{ $pengajuan->sidang->dosenPenguji1->nama ?? 'N/A' }}</p>
+            </div>
+            <div class="detail-group">
+                <label>Dosen Penguji 2:</label>
+                <p>{{ $pengajuan->sidang->dosenPenguji2->nama ?? 'N/A' }}</p>
+            </div>
+            --}}
+            <div class="detail-group">
+                <label>Ketua Sidang:</label>
+                <p>{{ $pengajuan->sidang->ketuaSidang->nama ?? 'N/A' }}</p>
+            </div>
+            <div class="detail-group">
+                <label>Sekretaris Sidang:</label>
+                <p>{{ $pengajuan->sidang->sekretarisSidang->nama ?? 'N/A' }}</p>
+            </div>
+            <div class="detail-group">
+                <label>Anggota Sidang 1:</label>
+                <p>{{ $pengajuan->sidang->anggota1Sidang->nama ?? 'N/A' }}</p>
+            </div>
+            <div class="detail-group">
+                <label>Anggota Sidang 2:</label>
+                <p>{{ $pengajuan->sidang->anggota2Sidang->nama ?? 'N/A' }}</p>
+            </div>
+            @else
+            <p>Informasi sidang belum tersedia.</p>
+        @endif
+
+        {{--<h3>Dokumen Pengajuan:</h3>
+        @if ($pengajuan->dokumens->isEmpty())
+            <p>Tidak ada dokumen yang diunggah untuk pengajuan ini.</p>
+        @else
+            <ul class="dokumen-list">
+                @foreach ($pengajuan->dokumens as $dokumen)
+                    <li>
+                        <span>{{ $dokumen->jenis_dokumen }}: {{ $dokumen->nama_file }} (Status: {{ str_replace('_', ' ', $dokumen->status) }})</span>
+                        <div>
+                            <a href="{{ url('storage/' . $dokumen->path_file) }}" target="_blank" class="btn btn-primary" style="margin-top: 0;">Lihat</a>
+                            
+                            @if ($dokumen->status === 'menunggu_verifikasi')
+                                <form action="{{ route('dosen.dokumen.setujui', $dokumen->id) }}" method="POST" style="display:inline-block;">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-success" style="margin-top: 0;">Setujui</button>
+                                </form>
+                                <form action="{{ route('dosen.dokumen.tolak', $dokumen->id) }}" method="POST" style="display:inline-block;">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-danger" style="margin-top: 0;">Tolak</button>
+                                </form>
+                            @endif
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif--}}
+
+        <a href="{{ route('dosen.pengajuan.saya') }}" class="btn btn-info">Kembali ke Daftar Pengajuan Saya</a>
+    </div>
+</body>
+
+
+
+saya ingin saat setelah kaprodi menentukan tanggal sidang, waktu sidang, sekretaris sidang, anggota 1 sidang, dan anggota 2 sidang, seluruh dosen yang bersangkutan (sekretaris, anggota1, anggota2) akan diberikan pemberitahuan tentang permintaan persetujuan dosen terkait tentang perannya disebuah pengajuan.
+
+
+

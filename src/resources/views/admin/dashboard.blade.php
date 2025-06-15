@@ -1,78 +1,36 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
 
-@section('title', 'Dashboard Admin')
+    <h2>Admin Dashboard</h2>
 
-@section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Dashboard Admin</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Card Mahasiswa -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-primary">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <i class="bi bi-people-fill text-primary"></i> Total Mahasiswa
-                                    </h5>
-                                    <p class="card-text display-6">{{ $mahasiswaCount }}</p>
-                                    <a href="{{ route('admin.mahasiswa.index') }}" class="btn btn-primary btn-sm">
-                                        Lihat Data <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+    <p>Selamat datang, Admin!</p>
 
-                        <!-- Card Dosen -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-success">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <i class="bi bi-person-badge-fill text-success"></i> Total Dosen
-                                    </h5>
-                                    <p class="card-text display-6">{{ $dosenCount }}</p>
-                                    <a href="{{ route('admin.dosen.index') }}" class="btn btn-success btn-sm">
-                                        Lihat Data <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+    <hr> {{-- Garis pemisah untuk menu navigasi --}}
 
-                        <!-- Card Lainnya -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-info">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <i class="bi bi-calendar-check-fill text-info"></i> Bimbingan Aktif
-                                    </h5>
-                                    <p class="card-text display-6">0</p>
-                                    <a href="#" class="btn btn-info btn-sm">
-                                        Lihat Jadwal <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <h3>Menu Navigasi</h3>
+    <ul>
+        <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ route('admin.mahasiswa.index') }}">Manajemen Mahasiswa</a></li>
+        <li><a href="{{ route('admin.dosen.index') }}">Manajemen Dosen</a></li>
+        {{-- Link ke daftar pengajuan yang perlu diverifikasi admin --}}
+        <li><a href="{{ route('admin.pengajuan.verifikasi.index') }}">Verifikasi Pengajuan Sidang</a></li>
+        {{-- Anda bisa menambahkan link ke daftar pengajuan lama jika masih digunakan --}}
+        {{-- <li><a href="{{ route('admin.pengajuan.index') }}">Daftar Semua Pengajuan (Lama)</a></li> --}}        {{-- Tambahkan link lain sesuai kebutuhan --}}
+        <li><a href="{{ route('admin.sidang.index') }}">Manajemen Sidang</a></li>
+    </ul>
 
-                    <div class="mt-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6>Aktivitas Terbaru</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle-fill"></i> Sistem dalam pengembangan. Fitur akan terus ditambahkan.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+    <hr>
+
+    <form action="{{ route('admin.logout') }}" method="POST">
+        @csrf <button type="submit">Logout</button>
+    </form>
+
+</body>
+</html>
