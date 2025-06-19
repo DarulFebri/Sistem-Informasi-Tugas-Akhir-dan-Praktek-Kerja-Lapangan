@@ -16,12 +16,16 @@ jobs:
 
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
+        working-directory: ./src
 
       - name: jalanin Laravel Pint untuk controller
-        run: ./vendor/bin/pint src/app/Http/Controllers
-        
+        run: ./vendor/bin/pint app/Http/Controllers
+        working-directory: ./src
+
       - name: jalanin Laravel Pint untuk controller admin
-        run: ./vendor/bin/pint src/app/Http/Controllers/Admin
+        run: ./vendor/bin/pint app/Http/Controllers/Admin
+        working-directory: ./src
 
       - name: jalanin Laravel Pint untuk controller kaprodi
-        run: ./vendor/bin/pint src/app/Http/Controllers/Kaprodi
+        run: ./vendor/bin/pint app/Http/Controllers/Kaprodi
+        working-directory: ./src
