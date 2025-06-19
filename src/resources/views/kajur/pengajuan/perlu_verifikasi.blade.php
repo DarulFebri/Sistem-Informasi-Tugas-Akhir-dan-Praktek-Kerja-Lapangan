@@ -72,7 +72,7 @@
                         <td>{{ $pengajuan->created_at->format('d M Y') }}</td>
                         <td>{{ Str::replace('_', ' ', Str::title($pengajuan->status)) }}</td>
                         <td>
-                            <a href="{{ route('kajur.sidang.show', $pengajuan->id) }}" class="btn btn-primary">Detail</a>
+                            <a href="{{ route('kajur.verifikasi.form', $pengajuan->id) }}" class="btn btn-primary">Detail & Verifikasi</a>
                         </td>
                     </tr>
                     @endforeach

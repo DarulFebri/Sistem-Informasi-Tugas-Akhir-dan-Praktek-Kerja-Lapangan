@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pengajuan;
 use App\Models\Dokumen;
-use Illuminate\Http\Request;
+use App\Models\Mahasiswa;
+use App\Models\Pengajuan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use App\Models\Mahasiswa; // Tambahkan ini
+use Illuminate\Support\Facades\Storage; // Tambahkan ini
 
 class DokumenController extends Controller
 {
@@ -20,7 +18,7 @@ class DokumenController extends Controller
 
     public function index(Pengajuan $pengajuan)
     {
-        if (!Auth::check() || Auth::user()->role !== 'mahasiswa') {
+        if (! Auth::check() || Auth::user()->role !== 'mahasiswa') {
             return redirect()->route('mahasiswa.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
@@ -43,7 +41,7 @@ class DokumenController extends Controller
     // Contoh: Jika Anda ingin mahasiswa bisa menghapus dokumen satu per satu
     public function destroy(Dokumen $dokumen)
     {
-        if (!Auth::check() || Auth::user()->role !== 'mahasiswa') {
+        if (! Auth::check() || Auth::user()->role !== 'mahasiswa') {
             return redirect()->route('mahasiswa.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
@@ -51,7 +49,7 @@ class DokumenController extends Controller
 
         // Pastikan dokumen milik mahasiswa yang login dan pengajuan masih dalam status draft/ditolak
         if ($dokumen->pengajuan->mahasiswa_id !== $mahasiswa->id ||
-            !in_array($dokumen->pengajuan->status, ['draft', 'ditolak_admin', 'ditolak_kaprodi'])) {
+            ! in_array($dokumen->pengajuan->status, ['draft', 'ditolak_admin', 'ditolak_kaprodi'])) {
             abort(403, 'Anda tidak diizinkan menghapus dokumen ini.');
         }
 

@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Mahasiswa;
-use App\Models\Dosen;
-use App\Models\Pengajuan;
-use App\Models\Sidang; // Tambahkan ini
-use App\Models\Dokumen;
-use App\Models\User; //
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\DosenImport;
-use App\Imports\MahasiswaImport; // Tambahkan ini
-use App\Exports\MahasiswaExport; // Tambahkan ini
-use App\Exports\DosenExport; // Tambahkan ini
-use App\Exports\SidangExport; // Tambahkan ini
-use Carbon\Carbon; // Tambahkan ini
+use App\Imports\MahasiswaImport;
+use App\Models\Dokumen;
+use App\Models\Dosen; // Tambahkan ini
+use App\Models\Mahasiswa;
+use App\Models\Pengajuan; //
+use App\Models\Sidang;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Tambahkan ini
+// Tambahkan ini
+// Tambahkan ini
+// Tambahkan ini
+// Tambahkan ini
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash; 
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -66,7 +65,8 @@ class AdminController extends Controller
     }
 
     // Dibawah ini untuk CRUD mahasiswa
-    public function daftarMahasiswa(Request $request){
+    public function daftarMahasiswa(Request $request)
+    {
         $mahasiswas = Mahasiswa::query(); // Start with a query builder
 
         // Sorting
@@ -145,11 +145,12 @@ class AdminController extends Controller
             'nama_lengkap' => $request->nama_lengkap,
             'jurusan' => $request->jurusan,
             'prodi' => $request->prodi,
+            'email' => $request->email,
             'jenis_kelamin' => $request->jenis_kelamin,
             'kelas' => $request->kelas,
         ]);
 
-        logActivity('Membuat mahasiswa baru: ' . $request->nama_lengkap, 'Mahasiswa');
+        logActivity('Membuat mahasiswa baru: '.$request->nama_lengkap, 'Mahasiswa');
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil ditambahkan!');
     }
@@ -162,7 +163,7 @@ class AdminController extends Controller
     public function updateMahasiswa(Request $request, Mahasiswa $mahasiswa)
     {
         $request->validate([
-            'nim' => 'required|unique:mahasiswas,nim,' . $mahasiswa->id,
+            'nim' => 'required|unique:mahasiswas,nim,'.$mahasiswa->id,
             'nama_lengkap' => 'required',
             'jurusan' => 'required',
             'prodi' => 'required',
@@ -172,7 +173,7 @@ class AdminController extends Controller
 
         $mahasiswa->update($request->all());
 
-        logActivity('Mengupdate mahasiswa: ' . $mahasiswa->nama_lengkap, 'Mahasiswa');
+        logActivity('Mengupdate mahasiswa: '.$mahasiswa->nama_lengkap, 'Mahasiswa');
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil diupdate.');
     }
@@ -181,7 +182,7 @@ class AdminController extends Controller
     {
         $mahasiswa->delete();
 
-        logActivity('Menghapus mahasiswa: ' . $mahasiswa->nama_lengkap, 'Mahasiswa');
+        logActivity('Menghapus mahasiswa: '.$mahasiswa->nama_lengkap, 'Mahasiswa');
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil dihapus.');
     }
@@ -190,6 +191,7 @@ class AdminController extends Controller
     public function daftarDosen()
     {
         $dosens = Dosen::all();
+
         return view('admin.dosen.index', compact('dosens'));
     }
 
@@ -248,7 +250,7 @@ class AdminController extends Controller
     public function updateDosen(Request $request, Dosen $dosen)
     {
         $request->validate([
-            'nidn' => 'required|unique:dosens,nidn,' . $dosen->id,
+            'nidn' => 'required|unique:dosens,nidn,'.$dosen->id,
             'nama_lengkap' => 'required',
             'jenis_kelamin' => 'required',
         ]);
@@ -284,7 +286,7 @@ class AdminController extends Controller
     // Dibawah ini Pengajuan Sidang Methods
     public function daftarPengajuan()
     {
-        //$pengajuans = Pengajuan::with('mahasiswa')->get(); // Eager load data mahasiswa
+        // $pengajuans = Pengajuan::with('mahasiswa')->get(); // Eager load data mahasiswa
         $pengajuans = Pengajuan::with('mahasiswa') // Eager load relasi mahasiswa jika digunakan di view
             ->orderBy('created_at', 'desc') // Urutkan berdasarkan tanggal terbaru
             ->paginate(10); // Ambil 10 pengajuan per halaman. Sesuaikan jumlah ini.
@@ -295,18 +297,21 @@ class AdminController extends Controller
     public function detailPengajuan(Pengajuan $pengajuan)
     {
         $dokumens = Dokumen::where('pengajuan_id', $pengajuan->id)->get(); // Ambil dokumen terkait pengajuan
+
         return view('admin.pengajuan.show', compact('pengajuan', 'dokumens'));
     }
 
     public function setujuiPengajuan(Pengajuan $pengajuan)
     {
         $pengajuan->update(['status' => 'disetujui']);
+
         return redirect()->route('admin.pengajuan.index')->with('success', 'Pengajuan berhasil disetujui.');
     }
 
     public function tolakPengajuan(Pengajuan $pengajuan)
     {
         $pengajuan->update(['status' => 'ditolak']);
+
         return redirect()->route('admin.pengajuan.index')->with('success', 'Pengajuan berhasil ditolak.');
     }
 
@@ -314,6 +319,7 @@ class AdminController extends Controller
     public function daftarSidang()
     {
         $sidangs = Sidang::with('pengajuan.mahasiswa')->get(); // Eager load data
+
         return view('admin.sidang.index', compact('sidangs'));
     }
 
@@ -325,7 +331,7 @@ class AdminController extends Controller
         foreach ($sidangs as $sidang) {
             if ($sidang->tanggal_sidang) {
                 $events[] = [
-                    'title' => 'Sidang ' . $sidang->pengajuan->mahasiswa->nama_lengkap,
+                    'title' => 'Sidang '.$sidang->pengajuan->mahasiswa->nama_lengkap,
                     'start' => $sidang->tanggal_sidang,
                     // Tambahkan data lain yang ingin ditampilkan di kalender
                 ];
@@ -381,6 +387,7 @@ class AdminController extends Controller
     public function showActivities()
     {
         $activities = Activity::with('user')->latest()->paginate(10); // Ambil log, urutkan terbaru, paginasi
+
         return view('admin.activities.index', compact('activities'));
     }
 }

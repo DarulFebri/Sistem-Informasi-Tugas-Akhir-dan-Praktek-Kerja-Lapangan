@@ -16,13 +16,13 @@
     @endif
 
     <a href="{{ route('admin.mahasiswa.create') }}">Tambah Mahasiswa</a>
-    <a href="{{ route('admin.mahasiswa.import') }}">Import Mahasiswa</a>
+    <a href="{{ route('admin.mahasiswa.import.form') }}">Import Mahasiswa</a>
     <a href="{{ route('mahasiswas.export') }}" class="btn btn-success"><i class="fas fa-file-excel"></i> Export Mahasiswa</a> 
     <a href="{{ route('admin.dashboard') }}">Kembali Ke Dashboard</a>
         <table>
         <thead>
             <tr>
-                <th>NIM</th>
+                <th>NIM</th> 
                 <th>Nama Lengkap</th>
                 <th>Jurusan</th>
                 <th>Prodi</th>

@@ -104,19 +104,19 @@
 
             <div class="detail-group">
                 <label>Ketua Sidang:</label>
-                <p>{{ $pengajuan->sidang->ketuaSidang->nama ?? 'N/A' }}</p>
+                <p>{{ $pengajuan->sidang->ketuaSidang->nama ?? 'Belum Terpilih' }}</p>
             </div>
             <div class="detail-group">
                 <label>Sekretaris Sidang:</label>
-                <p>{{ $pengajuan->sidang->sekretarisSidang->nama ?? 'N/A' }}</p>
+                <p>{{ $pengajuan->sidang->sekretarisSidang->nama ?? 'Belum Terpilih' }}</p>
             </div>
             <div class="detail-group">
                 <label>Anggota Sidang 1:</label>
-                <p>{{ $pengajuan->sidang->anggota1Sidang->nama ?? 'N/A' }}</p>
+                <p>{{ $pengajuan->sidang->anggota1Sidang->nama ?? 'Belum Terpilih' }}</p>
             </div>
             <div class="detail-group">
                 <label>Anggota Sidang 2:</label>
-                <p>{{ $pengajuan->sidang->anggota2Sidang->nama ?? 'N/A' }}</p>
+                <p>{{ $pengajuan->sidang->anggota2Sidang->nama ?? 'Belum Terpilih' }}</p>
             </div>
             @else
             <p>Informasi sidang belum tersedia.</p>

@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable; // Import trait Notifiable
 
 class Dosen extends Model
 {
-    use HasFactory, Notifiable; 
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'user_id',

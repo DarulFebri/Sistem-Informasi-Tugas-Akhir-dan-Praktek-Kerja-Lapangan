@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Dosen; // Pastikan model Dosen di-import
-use App\Models\User; // Pastikan model User di-import
+use App\Models\Dosen;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB; // Jika masih ingin pakai DB::table
+use Illuminate\Support\Facades\Hash; // Pastikan Carbon diimpor
 
 class DosenSeeder extends Seeder
 {
@@ -15,15 +15,11 @@ class DosenSeeder extends Seeder
      */
     public function run(): void
     {
-        // Pastikan Anda membersihkan tabel jika menjalankan seeder berkali-kali untuk menghindari duplikasi
-        // DB::table('dosens')->truncate(); // Opsional, hati-hati jika ada data penting
-        // DB::table('users')->where('role', 'dosen')->delete(); // Opsional, hati-hati
-
         $dosensData = [
             [
                 'name' => 'Prof. Dr. Andi Wijaya',
                 'email' => 'andi.wijaya@example.com',
-                'password' => 'password123',
+                'password' => 'password123', // Password untuk tabel User
                 'nidn' => '197001012000011001',
                 'jurusan' => 'Teknik Informatika',
                 'prodi' => 'Sistem Informasi',
@@ -56,20 +52,50 @@ class DosenSeeder extends Seeder
                 'prodi' => 'Sistem Komputer',
                 'jenis_kelamin' => 'Laki-Laki',
             ],
+            [
+                'name' => 'Ilham Widajaya',
+                'email' => 'ilham@example.com',
+                'password' => '12345678', // Password untuk tabel User
+                'nidn' => '1234567890',
+                'jurusan' => 'Teknik Informatika',
+                'prodi' => 'Ilmu Komputer',
+                'jenis_kelamin' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Andrew Diantara',
+                'email' => 'andrew@example.com',
+                'password' => '12345678',
+                'nidn' => '0987654321',
+                'jurusan' => 'Sistem Informasi',
+                'prodi' => 'Sistem Informasi',
+                'jenis_kelamin' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Dimas Prasetyo',
+                'email' => 'dimas@example.com',
+                'password' => '12345678',
+                'nidn' => '1122334455',
+                'jurusan' => 'Teknik Komputer',
+                'prodi' => 'Jaringan Komputer',
+                'jenis_kelamin' => 'Laki-laki',
+            ],
         ];
 
         foreach ($dosensData as $data) {
-            // Buat user terlebih dahulu
+            // Cari user yang sudah ada (dibuat di UserSeeder)
+            // firstOrCreate di sini akan memastikan user dibuat jika belum ada,
+            // atau diambil jika sudah ada. Ini penting jika Anda menjalankan seeder secara terpisah.
             $user = User::firstOrCreate(
                 ['email' => $data['email']],
                 [
                     'name' => $data['name'],
                     'password' => Hash::make($data['password']),
                     'role' => 'dosen',
+                    'email_verified_at' => Carbon::now(),
                 ]
             );
 
-            // Kemudian buat dosen, hubungkan dengan user_id yang baru dibuat atau yang sudah ada
+            // Kemudian buat/update detail dosen di tabel dosens
             Dosen::firstOrCreate(
                 ['nidn' => $data['nidn']],
                 [
@@ -78,14 +104,12 @@ class DosenSeeder extends Seeder
                     'jurusan' => $data['jurusan'],
                     'prodi' => $data['prodi'],
                     'jenis_kelamin' => $data['jenis_kelamin'],
-                    // Password di tabel dosen bisa diabaikan jika login via tabel users,
-                    // atau bisa disimpan jika memang ada kebutuhan terpisah.
-                    // Sebaiknya dihapus dari tabel dosen atau set null jika tidak digunakan.
-                    'password' => Hash::make($data['password']), // HASH password di sini juga jika disimpan di tabel dosen
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']), // <-- PENTING: BARIS INI HARUS ADA
                 ]
             );
         }
 
-        echo "Berhasil nambahin daftar dosen yang terdaftar di sistem!\n";
+        echo "Detail dosen berhasil ditambahkan dan dihubungkan!\n";
     }
 }

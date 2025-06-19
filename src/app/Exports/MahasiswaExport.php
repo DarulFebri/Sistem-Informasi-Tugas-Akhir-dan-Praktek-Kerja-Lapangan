@@ -4,14 +4,14 @@ namespace App\Exports;
 
 use App\Models\Mahasiswa;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings; // Tambahkan ini
-use Maatwebsite\Excel\Concerns\ShouldAutoSize; // Opsional: Tambahkan ini untuk auto-size kolom
+use Maatwebsite\Excel\Concerns\ShouldAutoSize; // Tambahkan ini
+use Maatwebsite\Excel\Concerns\WithHeadings; // Opsional: Tambahkan ini untuk auto-size kolom
 
-class MahasiswaExport implements FromCollection, WithHeadings, ShouldAutoSize // Tambahkan interfaces
+class MahasiswaExport implements FromCollection, ShouldAutoSize, WithHeadings // Tambahkan interfaces
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         // Ambil semua data mahasiswa
@@ -29,9 +29,6 @@ class MahasiswaExport implements FromCollection, WithHeadings, ShouldAutoSize //
         )->get();
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         // Tentukan heading untuk kolom-kolom di Excel

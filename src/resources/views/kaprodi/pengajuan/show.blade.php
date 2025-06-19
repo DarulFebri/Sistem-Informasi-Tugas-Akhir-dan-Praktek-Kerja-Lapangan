@@ -3,361 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Pengajuan Kaprodi</title>
+    <title>Detail Pengajuan Sidang - Kaprodi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Umum */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
             padding: 20px;
-            background-color: #eef2f5; /* Warna latar belakang lebih lembut */
             color: #333;
         }
-
         .container {
-            max-width: 850px; /* Lebar container lebih besar */
+            max-width: 900px;
+            width: 95%;
             margin: 30px auto;
-            padding: 30px; /* Padding lebih besar */
-            border: 1px solid #dcdcdc; /* Border lebih lembut */
-            border-radius: 12px; /* Sudut lebih membulat */
-            box-shadow: 0 6px 12px rgba(0,0,0,0.08); /* Shadow lebih menonjol */
+            padding: 30px;
             background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
         }
-
         h2 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 25px;
             text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50; /* Warna judul lebih gelap */
-            font-size: 2.2em; /* Ukuran judul lebih besar */
-            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
         }
-
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            border-radius: 5px;
+        }
         h3 {
-            margin-top: 35px;
-            margin-bottom: 20px;
-            color: #34495e; /* Warna sub-judul */
-            border-bottom: 2px solid #007bff; /* Garis bawah biru */
-            padding-bottom: 8px;
             font-size: 1.5em;
-        }
-
-        h4 {
-            margin-top: 25px;
+            color: #34495e;
             margin-bottom: 15px;
-            color: #444;
-            font-size: 1.2em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-
-        p {
-            margin-bottom: 8px;
-            line-height: 1.6;
-            font-size: 0.98em;
+        .back-link {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        p strong {
-            color: #2c3e50; /* Warna bold lebih kontras */
-            display: inline-block; /* Untuk alignment yang lebih baik */
-            min-width: 150px; /* Agar label lebih rapi */
+        .back-link:hover {
+            color: #2980b9;
         }
-
         .alert {
             padding: 15px;
             margin-bottom: 25px;
             border-radius: 8px;
-            font-size: 1em;
-            display: flex; /* Untuk ikon/alignment */
+            font-size: 0.98em;
+            display: flex;
             align-items: center;
+            gap: 10px;
         }
-        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-
-        /* Buttons */
-        .btn {
-            padding: 10px 20px; /* Padding lebih besar */
-            border: none;
-            border-radius: 6px; /* Sudut lebih membulat */
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
+        .alert-success {
+            background-color: #e6ffed;
+            color: #1a7e3d;
+            border: 1px solid #b3e6c3;
+        }
+        .alert-danger {
+            background-color: #ffe6e6;
+            color: #c0392b;
+            border: 1px solid #e6b3b3;
+        }
+        .alert-info {
+            background-color: #e0f7fa;
+            color: #007bb2;
+            border: 1px solid #b2ebf2;
+        }
+        .card-section {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card-section p {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .card-section strong {
+            color: #555;
+            min-width: 150px;
             display: inline-block;
-            font-size: 0.95em; /* Ukuran font sedikit lebih besar */
-            margin-top: 10px;
-            margin-right: 8px; /* Jarak antar tombol */
-            transition: background-color 0.3s ease, transform 0.2s ease; /* Transisi halus dan efek hover */
-            font-weight: 500;
         }
-        .btn:hover {
-            transform: translateY(-2px); /* Efek angkat saat hover */
-        }
-        .btn-info { background-color: #17a2b8; } .btn-info:hover { background-color: #138496; }
-        .btn-success { background-color: #28a745; } .btn-success:hover { background-color: #218838; }
-        .btn-warning { background-color: #ffc107; color: #333; } .btn-warning:hover { background-color: #e0a800; }
-        .btn-danger { background-color: #dc3545; } .btn-danger:hover { background-color: #c82333; }
-        .btn-primary { background-color: #007bff; } .btn-primary:hover { background-color: #0056b3; }
-
-        .back-link {
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: capitalize;
             display: inline-block;
-            margin-bottom: 25px;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-            font-size: 1em;
-            transition: color 0.3s ease;
+            margin-left: 8px; /* Added for spacing */
         }
-        .back-link:hover {
-            color: #0056b3;
-            text-decoration: underline;
-        }
+        .status-badge.menunggu { background-color: #fff3cd; color: #856404; } /* warning */
+        .status-badge.setuju { background-color: #d4edda; color: #155724; } /* success */
+        .status-badge.tolak { background-color: #f8d7da; color: #721c24; } /* danger */
+        .status-badge.default { background-color: #e2e3e5; color: #495057; } /* secondary */
 
-        hr {
-            margin: 35px 0; /* Jarak HR lebih besar */
-            border: 0;
-            border-top: 1px solid #e0e0e0; /* Warna HR lebih lembut */
+        .info-message {
+            background-color: #e0f7fa;
+            border-left: 5px solid #00bcd4;
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #007bb2;
+            font-style: italic;
+            text-align: center;
         }
 
         /* Form Styling */
         .form-group {
-            margin-bottom: 20px; /* Jarak antar form-group lebih besar */
+            margin-bottom: 20px;
         }
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600; /* Font label lebih tebal */
-            color: #34495e;
-            font-size: 0.95em;
+            font-weight: 600;
+            color: #444;
         }
         .form-control {
-            width: calc(100% - 22px); /* Penyesuaian width untuk padding dan border */
-            padding: 10px;
+            width: 100%;
+            padding: 12px;
             border: 1px solid #ccc;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1em;
-            box-sizing: border-box; /* Pastikan padding dan border termasuk dalam lebar */
+            box-sizing: border-box;
             transition: border-color 0.3s ease;
         }
         .form-control:focus {
-            border-color: #007bff; /* Border biru saat focus */
-            outline: none; /* Hilangkan outline default */
-        }
-        select.form-control {
-            appearance: none; /* Hilangkan default arrow di select */
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-6.5H18.6c-5%200-9.3%201.8-13.2%206.5-3.9%203.9-6%208.7-6%2014.2%200%205.5%202.1%2010.3%206%2014.2l128%20127.9c3.9%203.9%208.7%206%2014.2%206s10.3-2.1%2014.2-6l128-127.9c3.9-3.9%206-8.7%206-14.2%200-5.5-2.1-10.3-6-14.2z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 12px;
-            padding-right: 30px; /* Ruang untuk arrow */
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
         .error-message {
-            color: #dc3545;
-            font-size: 0.9em;
+            color: #e74c3c;
+            font-size: 0.85em;
             margin-top: 5px;
-            display: block; /* Pastikan pesan error di baris baru */
+            display: block;
         }
         .buttons {
-            margin-top: 20px;
+            display: flex;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
         }
 
-        /* Dokumen Pengajuan List */
-        .document-list ul {
-            list-style-type: disc; /* Ubah ke bullet point */
-            padding-left: 20px;
-        }
-        .document-list ul li {
-            margin-bottom: 5px;
-        }
-        .document-list ul li a {
-            color: #007bff;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .document-list ul li a:hover {
-            color: #0056b3;
-            text-decoration: underline;
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .card-section {
+                padding: 15px;
+            }
+            .card-section p {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .card-section strong {
+                min-width: unset;
+                margin-bottom: 5px;
+            }
+            .buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Detail Pengajuan Sidang</h2>
-        <a href="{{ route('kaprodi.pengajuan.index') }}" class="back-link">&larr; Kembali ke Daftar Pengajuan</a>
+        <a href="{{ route('kaprodi.pengajuan.index') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Kembali ke Daftar Pengajuan
+        </a>
 
         @if (session('success'))
             <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
                 {{ session('success') }}
             </div>
         @endif
         @if (session('error'))
             <div class="alert alert-danger">
+                <i class="fas fa-times-circle"></i>
                 {{ session('error') }}
             </div>
         @endif
+        @if (session('finalisasi_error'))
+            <div class="alert alert-danger" style="margin-top: 15px;">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ session('finalisasi_error') }}
+            </div>
+        @endif
 
-        <p><strong>Mahasiswa:</strong> {{ $pengajuan->mahasiswa->nama_lengkap }} ({{ $pengajuan->mahasiswa->nim }})</p>
-        <p><strong>Jenis Pengajuan:</strong> {{ $pengajuan->jenis_pengajuan }}</p>
-        <p><strong>Status:</strong> {{ $pengajuan->status }}</p>
-        <p><strong>Tanggal Diajukan:</strong> {{ \Carbon\Carbon::parse($pengajuan->created_at)->format('d M Y H:i') }}</p>
+        <div class="card-section">
+            <h3><i class="fas fa-user-graduate"></i> Detail Mahasiswa & Pengajuan</h3>
+            <p><strong>Mahasiswa:</strong> {{ $pengajuan->mahasiswa->nama_lengkap }} ({{ $pengajuan->mahasiswa->nim }})</p>
+            <p><strong>Jenis Pengajuan:</strong> {{ strtoupper(str_replace('_', ' ', $pengajuan->jenis_pengajuan)) }}</p>
+            <p>
+                <strong>Status Pengajuan:</strong>
+                <span class="status-badge {{
+                    $pengajuan->status == 'diajukan_mahasiswa' ? 'menunggu' :
+                    ($pengajuan->status == 'diverifikasi_admin' ? 'menunggu' :
+                    ($pengajuan->status == 'menunggu_persetujuan_dosen' ? 'menunggu' :
+                    ($pengajuan->status == 'disetujui_kaprodi' ? 'setuju' :
+                    ($pengajuan->status == 'sidang_selesai' ? 'setuju' :
+                    ($pengajuan->status == 'ditolak_admin' || $pengajuan->status == 'ditolak_kaprodi' ? 'tolak' : 'default')))))
+                }}">
+                    {{ ucfirst(str_replace('_', ' ', $pengajuan->status)) }}
+                </span>
+            </p>
+            <p><strong>Tanggal Diajukan:</strong> {{ \Carbon\Carbon::parse($pengajuan->created_at)->translatedFormat('d F Y H:i') }}</p>
+        </div>
 
-        <hr>
+        <div class="card-section">
+            <h3><i class="fas fa-calendar-alt"></i> Informasi Sidang</h3>
+            @if ($pengajuan->sidang)
+                <p>
+                    <strong>Dosen Pembimbing:</strong>
+                    {{ $pengajuan->sidang->dosenPembimbing->nama ?? 'Belum Terpilih' }}
+                    @if ($pengajuan->sidang->dosenPembimbing)
+                        (<span class="status-badge {{
+                            $pengajuan->sidang->persetujuan_dosen_pembimbing == 'setuju' ? 'setuju' :
+                            ($pengajuan->sidang->persetujuan_dosen_pembimbing == 'tolak' ? 'tolak' : 'menunggu')
+                        }}">
+                            {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_dosen_pembimbing)) }}
+                        </span>)
+                    @endif
+                </p>
+                <p>
+                    <strong>Dosen Penguji 1:</strong>
+                    {{ $pengajuan->sidang->dosenPenguji1->nama ?? 'Belum Terpilih' }}
+                    @if ($pengajuan->sidang->dosenPenguji1)
+                        (<span class="status-badge {{
+                            $pengajuan->sidang->persetujuan_dosen_penguji1 == 'setuju' ? 'setuju' :
+                            ($pengajuan->sidang->persetujuan_dosen_penguji1 == 'tolak' ? 'tolak' : 'menunggu')
+                        }}">
+                            {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_dosen_penguji1)) }}
+                        </span>)
+                    @endif
+                </p>
 
-        <h3>Informasi Sidang:</h3>
-        <p>
-            <strong>Pembimbing 1:</strong> 
-            {{ $pengajuan->sidang->dosenPembimbing->nama ?? 'Belum Terpilih' }} 
-            @if ($pengajuan->sidang->dosenPembimbing)
-                (<span class="{{ $pengajuan->sidang->persetujuan_dosen_pembimbing == 'setuju' ? 'text-success' : ($pengajuan->sidang->persetujuan_dosen_pembimbing == 'tolak' ? 'text-danger' : 'text-warning') }}">
-                    {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_dosen_pembimbing)) }}
-                </span>)
+                <p><strong>Tanggal & Waktu Sidang:</strong> {{ $pengajuan->sidang->tanggal_waktu_sidang ? \Carbon\Carbon::parse($pengajuan->sidang->tanggal_waktu_sidang)->translatedFormat('d F Y H:i') : 'Belum Dijadwalkan' }}</p>
+                <p><strong>Ruangan Sidang:</strong> {{ $pengajuan->sidang->ruangan_sidang ?? 'Belum Ditentukan' }}</p>
+                <p>
+                    <strong>Ketua Sidang:</strong>
+                    {{ $pengajuan->sidang->ketuaSidang->nama ?? 'Belum Terpilih' }}
+                    @if ($pengajuan->sidang->ketuaSidang)
+                        (<span class="status-badge {{
+                            $pengajuan->sidang->persetujuan_ketua_sidang == 'setuju' ? 'setuju' :
+                            ($pengajuan->sidang->persetujuan_ketua_sidang == 'tolak' ? 'tolak' : 'menunggu')
+                        }}">
+                            {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_ketua_sidang)) }}
+                        </span>)
+                    @endif
+                </p>
+                <p>
+                    <strong>Sekretaris Sidang:</strong>
+                    {{ $pengajuan->sidang->sekretarisSidang->nama ?? 'Belum Terpilih' }}
+                    @if ($pengajuan->sidang->sekretarisSidang)
+                        (<span class="status-badge {{
+                            $pengajuan->sidang->persetujuan_sekretaris_sidang == 'setuju' ? 'setuju' :
+                            ($pengajuan->sidang->persetujuan_sekretaris_sidang == 'tolak' ? 'tolak' : 'menunggu')
+                        }}">
+                            {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_sekretaris_sidang)) }}
+                        </span>)
+                    @endif
+                </p>
+                <p>
+                    <strong>Anggota Sidang 1:</strong>
+                    {{ $pengajuan->sidang->anggota1Sidang->nama ?? 'Belum Terpilih' }}
+                    @if ($pengajuan->sidang->anggota1Sidang)
+                        (<span class="status-badge {{
+                            $pengajuan->sidang->persetujuan_anggota1_sidang == 'setuju' ? 'setuju' :
+                            ($pengajuan->sidang->persetujuan_anggota1_sidang == 'tolak' ? 'tolak' : 'menunggu')
+                        }}">
+                            {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_anggota1_sidang)) }}
+                        </span>)
+                    @endif
+                </p>
+                <p>
+                    <strong>Anggota Sidang 2:</strong>
+                    {{ $pengajuan->sidang->anggota2Sidang->nama ?? 'Belum Terpilih' }}
+                    @if ($pengajuan->sidang->anggota2Sidang)
+                        (<span class="status-badge {{
+                            $pengajuan->sidang->persetujuan_anggota2_sidang == 'setuju' ? 'setuju' :
+                            ($pengajuan->sidang->persetujuan_anggota2_sidang == 'tolak' ? 'tolak' : 'menunggu')
+                        }}">
+                            {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_anggota2_sidang)) }}
+                        </span>)
+                    @endif
+                </p>
+            @else
+                <p class="info-message">Detail sidang belum tersedia untuk pengajuan ini. Kaprodi perlu menjadwalkan dosen dan informasi sidang.</p>
             @endif
-        </p>
-        <p>
-            <strong>Pembimbing 2:</strong> 
-            {{ $pengajuan->sidang->dosenPenguji1->nama ?? 'Belum Terpilih' }}
-            @if ($pengajuan->sidang->dosenPenguji1)
-                (<span class="{{ $pengajuan->sidang->persetujuan_dosen_penguji1 == 'setuju' ? 'text-success' : ($pengajuan->sidang->persetujuan_dosen_penguji1 == 'tolak' ? 'text-danger' : 'text-warning') }}">
-                    {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_dosen_penguji1)) }}
-                </span>)
-            @endif
-        </p>
+        </div>
 
-        <p><strong>Tanggal & Waktu Sidang:</strong> {{ $pengajuan->sidang->tanggal_waktu_sidang ? \Carbon\Carbon::parse($pengajuan->sidang->tanggal_waktu_sidang)->format('d M Y H:i') : 'Belum Dijadwalkan' }}</p>
-        <p><strong>Ruangan Sidang:</strong> {{ $pengajuan->sidang->ruangan_sidang ?? 'Belum Ditentukan' }}</p>
-        <p>
-            <strong>Ketua Sidang:</strong> 
-            {{ $pengajuan->sidang->ketuaSidang->nama ?? 'Belum Terpilih' }}
-            @if ($pengajuan->sidang->ketuaSidang)
-                (<span class="{{ $pengajuan->sidang->persetujuan_ketua_sidang == 'setuju' ? 'text-success' : ($pengajuan->sidang->persetujuan_ketua_sidang == 'tolak' ? 'text-danger' : 'text-warning') }}">
-                    {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_ketua_sidang)) }}
-                </span>)
-            @endif
-        </p>
-        <p>
-            <strong>Sekretaris Sidang:</strong> 
-            {{ $pengajuan->sidang->sekretarisSidang->nama ?? 'Belum Terpilih' }}
-            @if ($pengajuan->sidang->sekretarisSidang)
-                (<span class="{{ $pengajuan->sidang->persetujuan_sekretaris_sidang == 'setuju' ? 'text-success' : ($pengajuan->sidang->persetujuan_sekretaris_sidang == 'tolak' ? 'text-danger' : 'text-warning') }}">
-                    {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_sekretaris_sidang)) }}
-                </span>)
-            @endif
-        </p>
-        <p>
-            <strong>Anggota Sidang 1:</strong> 
-            {{ $pengajuan->sidang->anggota1Sidang->nama ?? 'Belum Terpilih' }}
-            @if ($pengajuan->sidang->anggota1Sidang)
-                (<span class="{{ $pengajuan->sidang->persetujuan_anggota1_sidang == 'setuju' ? 'text-success' : ($pengajuan->sidang->persetujuan_anggota1_sidang == 'tolak' ? 'text-danger' : 'text-warning') }}">
-                    {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_anggota1_sidang)) }}
-                </span>)
-            @endif
-        </p>
-        <p>
-            <strong>Anggota Sidang 2:</strong> 
-            {{ $pengajuan->sidang->anggota2Sidang->nama ?? 'Belum Terpilih' }}
-            @if ($pengajuan->sidang->anggota2Sidang)
-                (<span class="{{ $pengajuan->sidang->persetujuan_anggota2_sidang == 'setuju' ? 'text-success' : ($pengajuan->sidang->persetujuan_anggota2_sidang == 'tolak' ? 'text-danger' : 'text-warning') }}">
-                    {{ ucfirst(str_replace('_', ' ', $pengajuan->sidang->persetujuan_anggota2_sidang)) }}
-                </span>)
-            @endif
-        </p>
+        <div class="card-section">
+            <h3><i class="fas fa-cogs"></i> Aksi Kaprodi</h3>
 
-        <hr>
+            @if (in_array($pengajuan->status, ['diverifikasi_admin', 'menunggu_persetujuan_dosen', 'disetujui_kaprodi']))
+                <h4>Form Penjadwalan Sidang</h4>
+                <form action="{{ route('kaprodi.pengajuan.jadwalkan.storeUpdate', $pengajuan->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-        <h3 id="aksi-kaprodi">Aksi Kaprodi:</h3>
+                    <div class="form-group">
+                        <label for="ketua_sidang_id">Ketua Sidang:</label>
+                        <select name="ketua_sidang_id" id="ketua_sidang_id" class="form-control">
+                            <option value="">Pilih Ketua Sidang</option>
+                            @php
+                                $pembimbing1Setuju = $pengajuan->sidang && $pengajuan->sidang->dosenPembimbing && $pengajuan->sidang->persetujuan_dosen_pembimbing === 'setuju';
+                                $pembimbing2Setuju = $pengajuan->sidang && $pengajuan->sidang->dosenPenguji1 && $pengajuan->sidang->persetujuan_dosen_penguji1 === 'setuju';
+                            @endphp
 
-        @if (in_array($pengajuan->status, ['diverifikasi_admin', 'menunggu_persetujuan_dosen']))
-            <h4>Form Penjadwalan Sidang</h4>
-            <form action="{{ route('kaprodi.pengajuan.jadwalkan.storeUpdate', $pengajuan->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+                            @if ($pembimbing1Setuju)
+                                <option value="{{ $pengajuan->sidang->dosenPembimbing->id }}"
+                                    {{ old('ketua_sidang_id', $pengajuan->sidang->ketua_sidang_dosen_id ?? '') == $pengajuan->sidang->dosenPembimbing->id ? 'selected' : '' }}>
+                                    {{ $pengajuan->sidang->dosenPembimbing->nama }} (Pembimbing)
+                                </option>
+                            @endif
 
-                <div class="form-group">
-                    <label for="sekretaris_sidang_id">Sekretaris Sidang:</label>
-                    <select name="sekretaris_sidang_id" id="sekretaris_sidang_id" class="form-control" required>
-                        <option value="">Pilih Sekretaris</option>
-                        @foreach ($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ old('sekretaris_sidang_id', $pengajuan->sidang->sekretaris_sidang_dosen_id ?? '') == $dosen->id ? 'selected' : '' }}>
-                                {{ $dosen->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('sekretaris_sidang_id') <span class="error-message">{{ $message }}</span> @enderror
-                </div>
+                            @if ($pembimbing2Setuju)
+                                <option value="{{ $pengajuan->sidang->dosenPenguji1->id }}"
+                                    {{ old('ketua_sidang_id', $pengajuan->sidang->ketua_sidang_dosen_id ?? '') == $pengajuan->sidang->dosenPenguji1->id ? 'selected' : '' }}>
+                                    {{ $pengajuan->sidang->dosenPenguji1->nama }} (Penguji 1)
+                                </option>
+                            @endif
 
-                <div class="form-group">
-                    <label for="anggota_1_sidang_id">Anggota 1 Sidang:</label>
-                    <select name="anggota_1_sidang_id" id="anggota_1_sidang_id" class="form-control" required>
-                        <option value="">Pilih Anggota 1</option>
-                        @foreach ($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ old('anggota_1_sidang_id', $pengajuan->sidang->anggota1_sidang_dosen_id ?? '') == $dosen->id ? 'selected' : '' }}>
-                                {{ $dosen->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('anggota_1_sidang_id') <span class="error-message">{{ $message }}</span> @enderror
-                </div>
+                            {{-- Jika tidak ada pembimbing yang disetujui, Kaprodi tidak bisa memilih Ketua Sidang dari daftar pembimbing. --}}
+                            {{-- Tetapi Kaprodi bisa tetap menyimpan jadwal tanpa Ketua Sidang. --}}
+                            @if (!$pembimbing1Setuju && !$pembimbing2Setuju)
+                                <option value="" disabled>Dosen Pembimbing/Penguji belum menyetujui</option>
+                            @endif
+                        </select>
+                        @error('ketua_sidang_id') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="anggota_2_sidang_id">Anggota 2 Sidang:</label>
-                    <select name="anggota_2_sidang_id" id="anggota_2_sidang_id" class="form-control">
-                        <option value="">Pilih Anggota 2 (Opsional)</option>
-                        @foreach ($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ old('anggota_2_sidang_id', $pengajuan->sidang->anggota2_sidang_dosen_id ?? '') == $dosen->id ? 'selected' : '' }}>
-                                {{ $dosen->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('anggota_2_sidang_id') <span class="error-message">{{ $message }}</span> @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="sekretaris_sidang_id">Sekretaris Sidang:</label>
+                        <select name="sekretaris_sidang_id" id="sekretaris_sidang_id" class="form-control" required>
+                            <option value="">Pilih Sekretaris</option>
+                            @foreach ($dosens as $dosen)
+                                <option value="{{ $dosen->id }}" {{ old('sekretaris_sidang_id', $pengajuan->sidang->sekretaris_sidang_dosen_id ?? '') == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('sekretaris_sidang_id') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="tanggal_waktu_sidang">Tanggal dan Waktu Sidang:</label>
-                    <input type="datetime-local" name="tanggal_waktu_sidang" id="tanggal_waktu_sidang" class="form-control"
-                                 value="{{ old('tanggal_waktu_sidang', $pengajuan->sidang->tanggal_waktu_sidang ? \Carbon\Carbon::parse($pengajuan->sidang->tanggal_waktu_sidang)->format('Y-m-d\TH:i') : '') }}" required>
-                    @error('tanggal_waktu_sidang') <span class="error-message">{{ $message }}</span> @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="anggota_1_sidang_id">Anggota 1 Sidang:</label>
+                        <select name="anggota_1_sidang_id" id="anggota_1_sidang_id" class="form-control" required>
+                            <option value="">Pilih Anggota 1</option>
+                            @foreach ($dosens as $dosen)
+                                <option value="{{ $dosen->id }}" {{ old('anggota_1_sidang_id', $pengajuan->sidang->anggota1_sidang_dosen_id ?? '') == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('anggota_1_sidang_id') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="ruangan_sidang">Ruangan Sidang:</label>
-                    <input type="text" name="ruangan_sidang" id="ruangan_sidang" class="form-control" placeholder="Contoh: Ruang Sidang A"
-                                 value="{{ old('ruangan_sidang', $pengajuan->sidang->ruangan_sidang ?? '') }}" required>
-                    @error('ruangan_sidang') <span class="error-message">{{ $message }}</span> @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="anggota_2_sidang_id">Anggota 2 Sidang:</label>
+                        <select name="anggota_2_sidang_id" id="anggota_2_sidang_id" class="form-control">
+                            <option value="">Pilih Anggota 2 (Opsional)</option>
+                            @foreach ($dosens as $dosen)
+                                <option value="{{ $dosen->id }}" {{ old('anggota_2_sidang_id', $pengajuan->sidang->anggota2_sidang_dosen_id ?? '') == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('anggota_2_sidang_id') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
 
-                <div class="buttons">
-                    <button type="submit" class="btn btn-primary">
+                    <div class="form-group">
+                        <label for="tanggal_waktu_sidang">Tanggal dan Waktu Sidang:</label>
+                        <input type="datetime-local" name="tanggal_waktu_sidang" id="tanggal_waktu_sidang" class="form-control"
+                                     value="{{ old('tanggal_waktu_sidang', $pengajuan->sidang->tanggal_waktu_sidang ? \Carbon\Carbon::parse($pengajuan->sidang->tanggal_waktu_sidang)->format('Y-m-d\TH:i') : '') }}" required>
+                        @error('tanggal_waktu_sidang') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ruangan_sidang">Ruangan Sidang:</label>
+                        <input type="text" name="ruangan_sidang" id="ruangan_sidang" class="form-control" placeholder="Contoh: Ruang Sidang A"
+                                     value="{{ old('ruangan_sidang', $pengajuan->sidang->ruangan_sidang ?? '') }}" required>
+                        @error('ruangan_sidang') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="buttons">
                         @php
-                            $isScheduled = false;
-                            // Memeriksa apakah sidang sudah ada DAN memiliki data jadwal esensial
-                            if ($pengajuan->sidang && $pengajuan->sidang->exists &&
+                            // Check if essential fields for a basic schedule are filled
+                            $isBasicScheduled = $pengajuan->sidang &&
                                 $pengajuan->sidang->sekretaris_sidang_dosen_id &&
                                 $pengajuan->sidang->anggota1_sidang_dosen_id &&
                                 $pengajuan->sidang->tanggal_waktu_sidang &&
-                                $pengajuan->sidang->ruangan_sidang) {
-                                $isScheduled = true;
-                            }
+                                $pengajuan->sidang->ruangan_sidang;
                         @endphp
- 
-                        @if ($isScheduled)
-                            Update Jadwal
-                        @else
-                            Jadwalkan Sidang
-                        @endif
-                    </button>
-                </div>
-            </form>
-
-            {{-- Tombol Finalisasi Jadwal --}}
-            @if ($pengajuan->sidang && $pengajuan->status === 'menunggu_persetujuan_dosen')
-                <form action="{{ route('kaprodi.pengajuan.finalkan.jadwal', $pengajuan->id) }}" method="POST" style="display:inline-block; margin-top: 15px;">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">Finalisasi Pengajuan Sidang</button>
-                </form>
-                {{-- Pesan error validasi akan muncul di bawah tombol jika gagal --}}
-                @if (session('finalisasi_error'))
-                    <div class="alert alert-danger" style="margin-top: 10px;">
-                        {{ session('finalisasi_error') }}
+                        <button type="submit" class="btn btn-primary">
+                            @if ($isBasicScheduled)
+                                Update Jadwal
+                            @else
+                                Jadwalkan Sidang
+                            @endif
+                        </button>
                     </div>
+                </form>
+
+                {{-- Tombol Finalisasi Jadwal --}}
+                @if ($pengajuan->sidang && $pengajuan->sidang->exists && $isBasicScheduled)
+                    <form action="{{ route('kaprodi.pengajuan.finalkan.jadwal', $pengajuan->id) }}" method="POST" style="margin-top: 20px;">
+                        @csrf
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-check-circle"></i> Finalisasi Pengajuan Sidang</button>
+                    </form>
                 @endif
+            @else
+                <p class="info-message">Tidak ada aksi penjadwalan yang tersedia untuk status pengajuan ini ({{ ucfirst(str_replace('_', ' ', $pengajuan->status)) }}).</p>
             @endif
-        @endif
+        </div>
 
     </div>
 </body>

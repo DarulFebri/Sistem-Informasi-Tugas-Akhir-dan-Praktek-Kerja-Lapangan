@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 
 class Mahasiswa extends Model
 {
@@ -12,20 +12,34 @@ class Mahasiswa extends Model
     protected $fillable = [
         'user_id',
         'nim',
-        'nama_lengkap', // Sesuaikan jika nama kolom di DB berbeda
+        'nama_lengkap',
         'jurusan',
         'prodi',
         'jenis_kelamin',
         'kelas',
-        'email',    // Tambahkan jika ada di DB
-        //'password', // Tambahkan jika ada di DB
-        'user_id',
+        'email',
+        'otp',
+        'otp_expires_at',
     ];
 
-    // Jika ada relasi ke User
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'otp_expires_at' => 'datetime', // WAJIB: Pastikan ini dicasting sebagai datetime
+        ];
+    }
+
+    // Relasi ke User
     public function user()
     {
-        return $this->belongsTo(User::class);
+        // Asumsi: Mahasiswa memiliki satu User yang terkait.
+        // Default foreign key adalah user_id, jadi tidak perlu eksplisit kecuali berbeda.
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // Relasi ke Pengajuan (jika perlu)

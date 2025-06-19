@@ -4,25 +4,194 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ isset($pengajuan) ? 'Edit Pengajuan' : 'Buat Pengajuan' }} {{ strtoupper($jenis) }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 800px; margin: auto; padding: 25px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; margin-bottom: 25px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        input[type="file"] { border: 1px solid #ccc; padding: 10px; border-radius: 5px; width: calc(100% - 22px); background-color: #f9f9f9; }
-        select { border: 1px solid #ccc; padding: 10px; border-radius: 5px; width: 100%; background-color: #f9f9f9; }
-        button { background-color: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-right: 10px; transition: background-color 0.3s ease; }
-        button:hover { background-color: #0056b3; }
-        .button-draft { background-color: #6c757d; }
-        .button-draft:hover { background-color: #5a6268; }
-        .back-link { display: block; text-align: center; margin-top: 30px; color: #007bff; text-decoration: none; font-size: 16px; }
-        .back-link:hover { text-decoration: underline; }
-        .error-message { color: red; font-size: 0.9em; margin-top: 5px; display: block; }
-        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .current-file { font-size: 0.9em; color: #666; margin-top: 5px; }
+        :root {
+            --primary-blue: #007bff;
+            --dark-blue: #0056b3;
+            --light-blue-bg: #e6f2ff;
+            --white: #ffffff;
+            --light-grey: #f8f9fa;
+            --medium-grey: #ced4da;
+            --dark-grey: #495057;
+            --text-color: #343a40;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --draft-button-bg: #6c757d;
+            --draft-button-hover: #5a6268;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--light-grey);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-blue);
+            margin-bottom: 30px;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-blue);
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: var(--dark-blue);
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-grey);
+        }
+
+        input[type="file"],
+        select {
+            border: 1px solid var(--medium-grey);
+            padding: 10px 12px;
+            border-radius: 6px;
+            width: calc(100% - 24px); /* Account for padding */
+            background-color: var(--light-blue-bg);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="file"]:focus,
+        select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        button {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-right: 15px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+            transform: translateY(-2px);
+        }
+
+        .button-draft {
+            background-color: var(--draft-button-bg);
+        }
+
+        .button-draft:hover {
+            background-color: var(--draft-button-hover);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+            color: var(--dark-blue);
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .current-file {
+            font-size: 0.9em;
+            color: var(--dark-grey);
+            margin-top: 5px;
+        }
+
+        .current-file a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .current-file a:hover {
+            text-decoration: underline;
+        }
+
+        small {
+            color: var(--dark-grey);
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -105,18 +274,18 @@
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                     @if ($jenis == 'ta' && $key == 'nilai_toeic')
-                        <small style="color: #666; display: block; margin-top: 5px;">Jika belum mencukupi, fotokopi kartu nilai TOEIC terakhir dan fotokopi bukti pendaftaran tes TOEIC berikutnya.</small>
+                        <small>Jika belum mencukupi, fotokopi kartu nilai TOEIC terakhir dan fotokopi bukti pendaftaran tes TOEIC berikutnya.</small>
                     @endif
                      @if ($jenis == 'pkl' && $key == 'kuisioner_kelulusan')
-                        <small style="color: #666; display: block; margin-top: 5px;">Opsional jika tidak ada.</small>
+                        <small>Opsional jika tidak ada.</small>
                     @endif
                      @if ($jenis == 'ta' && $key == 'ipk_terakhir')
-                        <small style="color: #666; display: block; margin-top: 5px;">(Lampiran Rapor Semester 1 s.d 5 (D3) dan 1 s.d 7 (D4))</small>
+                        <small>(Lampiran Rapor Semester 1 s.d 5 (D3) dan 1 s.d 7 (D4))</small>
                     @endif
                 </div>
             @endforeach
 
-            <p style="font-size: 0.9em; color: #666; margin-top: 20px;">Catatan: Untuk "Map Plastik", akan diurus secara fisik dan tidak perlu diunggah.</p>
+            <p style="font-size: 0.9em; color: var(--dark-grey); margin-top: 20px;">Catatan: Untuk "Map Plastik", akan diurus secara fisik dan tidak perlu diunggah.</p>
 
             <button type="submit" name="action" value="submit">Ajukan {{ strtoupper($jenis) }}</button>
             <button type="submit" name="action" value="draft" class="button-draft">Simpan sebagai Draft</button>
